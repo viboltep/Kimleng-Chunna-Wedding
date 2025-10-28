@@ -1,0 +1,146 @@
+pipeline {
+    agent any
+    
+    environment {
+        VPS_HOST = 'your-vps-ip-or-domain'
+        VPS_USER = 'root'
+        DEPLOY_PATH = '/var/www/kimleng-wedding'
+        FLUTTER_VERSION = 'stable'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code from repository...'
+                checkout scm
+            }
+        }
+        
+        stage('Setup Flutter') {
+            steps {
+                echo 'Setting up Flutter SDK...'
+                sh '''
+                    if [ ! -d "$HOME/flutter" ]; then
+                        echo "Installing Flutter..."
+                        cd $HOME
+                        wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.0-stable.tar.xz -O flutter.tar.xz
+                        tar xf flutter.tar.xz
+                    fi
+                    export PATH="$HOME/flutter/bin:$PATH"
+                    flutter --version
+                '''
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing Flutter dependencies...'
+                sh '''
+                    export PATH="$HOME/flutter/bin:$PATH"
+                    flutter pub get
+                '''
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                echo 'Running Flutter tests...'
+                sh '''
+                    export PATH="$HOME/flutter/bin:$PATH"
+                    flutter test
+                '''
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                echo 'Building Flutter web app...'
+                sh '''
+                    export PATH="$HOME/flutter/bin:$PATH"
+                    flutter clean
+                    flutter pub get
+                    flutter build web --release --web-renderer canvaskit
+                '''
+            }
+        }
+        
+        stage('Archive Build') {
+            steps {
+                echo 'Archiving build artifacts...'
+                archiveArtifacts artifacts: 'build/web/**/*', fingerprint: true, allowEmptyArchive: false
+            }
+        }
+        
+        stage('Deploy to VPS') {
+            steps {
+                echo 'Deploying to Ubuntu VPS...'
+                script {
+                    // Copy build files to VPS
+                    sh '''
+                        echo "Copying files to VPS..."
+                        ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_HOST} "mkdir -p ${DEPLOY_PATH}"
+                        
+                        # Create backup of current version
+                        ssh ${VPS_USER}@${VPS_HOST} "if [ -d '${DEPLOY_PATH}/web' ]; then cp -r ${DEPLOY_PATH}/web ${DEPLOY_PATH}/web.backup-\$(date +%Y%m%d-%H%M%S); fi"
+                        
+                        # Copy new files
+                        rsync -avz --delete \
+                            --exclude='.git' \
+                            build/web/ ${VPS_USER}@${VPS_HOST}:${DEPLOY_PATH}/web/
+                        
+                        echo "Files deployed successfully!"
+                    '''
+                    
+                    // Reload Nginx
+                    sh '''
+                        echo "Reloading Nginx..."
+                        ssh ${VPS_USER}@${VPS_HOST} "sudo systemctl reload nginx"
+                        echo "Nginx reloaded successfully!"
+                    '''
+                }
+            }
+        }
+        
+        stage('Health Check') {
+            steps {
+                echo 'Checking application health...'
+                sh '''
+                    # Wait a moment for Nginx to reload
+                    sleep 5
+                    
+                    # Check if application is reachable
+                    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://${VPS_HOST}/ || echo "000")
+                    
+                    if [ "$HTTP_CODE" -eq 200 ]; then
+                        echo "✅ Application is running successfully!"
+                    else
+                        echo "⚠️ Application returned HTTP code: $HTTP_CODE"
+                        exit 1
+                    fi
+                '''
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo '🎉 Deployment completed successfully!'
+            mail to: 'your-email@example.com',
+                 subject: "✅ Deployment Successful: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: "The deployment of ${env.JOB_NAME} build #${env.BUILD_NUMBER} completed successfully."
+        }
+        
+        failure {
+            echo '❌ Deployment failed!'
+            mail to: 'your-email@example.com',
+                 subject: "❌ Deployment Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: "The deployment of ${env.JOB_NAME} build #${env.BUILD_NUMBER} failed. Please check Jenkins logs."
+        }
+        
+        always {
+            echo 'Cleaning up workspace...'
+            cleanWs()
+        }
+    }
+}
+

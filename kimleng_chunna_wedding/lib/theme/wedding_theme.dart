@@ -1,0 +1,117 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class WeddingColors {
+  static const Color primary = Color(0xFF8B4513);      // Saddle Brown
+  static const Color secondary = Color(0xFFD2B48C);     // Tan
+  static const Color accent = Color(0xFFF5DEB3);        // Wheat
+  static const Color background = Color(0xFFFEFEFE);    // Off White
+  static const Color textPrimary = Color(0xFF2C1810);   // Dark Brown
+  static const Color textSecondary = Color(0xFF6B5B47); // Medium Brown
+  static const Color gold = Color(0xFFFFD700);          // Gold
+  static const Color white = Color(0xFFFFFFFF);         // Pure White
+  static const Color lightGray = Color(0xFFF8F8F8);     // Light Gray
+}
+
+class WeddingTextStyles {
+  static TextStyle get heading1 => GoogleFonts.playfairDisplay(
+    fontSize: 48,
+    fontWeight: FontWeight.bold,
+    color: WeddingColors.textPrimary,
+    height: 1.2,
+  );
+  
+  static TextStyle get heading2 => GoogleFonts.playfairDisplay(
+    fontSize: 32,
+    fontWeight: FontWeight.w600,
+    color: WeddingColors.textPrimary,
+    height: 1.3,
+  );
+  
+  static TextStyle get heading3 => GoogleFonts.playfairDisplay(
+    fontSize: 24,
+    fontWeight: FontWeight.w500,
+    color: WeddingColors.textPrimary,
+    height: 1.4,
+  );
+  
+  static TextStyle get body => GoogleFonts.crimsonText(
+    fontSize: 16,
+    color: WeddingColors.textSecondary,
+    height: 1.6,
+  );
+  
+  static TextStyle get bodyLarge => GoogleFonts.crimsonText(
+    fontSize: 18,
+    color: WeddingColors.textSecondary,
+    height: 1.6,
+  );
+  
+  static TextStyle get caption => GoogleFonts.crimsonText(
+    fontSize: 14,
+    color: WeddingColors.textSecondary,
+    fontStyle: FontStyle.italic,
+    height: 1.5,
+  );
+  
+  static TextStyle get button => GoogleFonts.crimsonText(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: WeddingColors.white,
+  );
+  
+  static TextStyle get small => GoogleFonts.crimsonText(
+    fontSize: 12,
+    color: WeddingColors.textSecondary,
+    height: 1.4,
+  );
+}
+
+class WeddingTheme {
+  static ThemeData get lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: WeddingColors.primary,
+        brightness: Brightness.light,
+      ),
+      textTheme: TextTheme(
+        headlineLarge: WeddingTextStyles.heading1,
+        headlineMedium: WeddingTextStyles.heading2,
+        headlineSmall: WeddingTextStyles.heading3,
+        bodyLarge: WeddingTextStyles.bodyLarge,
+        bodyMedium: WeddingTextStyles.body,
+        bodySmall: WeddingTextStyles.caption,
+        labelLarge: WeddingTextStyles.button,
+        labelSmall: WeddingTextStyles.small,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: WeddingColors.primary,
+          foregroundColor: WeddingColors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          textStyle: WeddingTextStyles.button,
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: WeddingColors.secondary),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: WeddingColors.secondary),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: WeddingColors.primary, width: 2),
+        ),
+        labelStyle: WeddingTextStyles.body,
+        hintStyle: WeddingTextStyles.caption,
+      ),
+    );
+  }
+}
