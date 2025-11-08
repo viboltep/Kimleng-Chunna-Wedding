@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/wedding_theme.dart';
 
 class GallerySection extends StatelessWidget {
-  const GallerySection({Key? key}) : super(key: key);
+  const GallerySection({super.key});
 
   // Placeholder images - replace with actual couple photos
   static const List<String> imageUrls = [

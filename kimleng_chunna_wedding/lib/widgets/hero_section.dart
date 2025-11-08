@@ -6,7 +6,7 @@ import '../theme/wedding_theme.dart';
 import 'heart_shape.dart';
 
 class HeroSection extends StatefulWidget {
-  const HeroSection({Key? key}) : super(key: key);
+  const HeroSection({super.key});
 
   @override
   State<HeroSection> createState() => _HeroSectionState();
@@ -90,8 +90,8 @@ class _HeroSectionState extends State<HeroSection>
     final endDate = DateTime(2026, 3, 1, 22, 0); // March 1st, 2026 at 10:00 PM
     
     // Format dates for calendar URL
-    final startDateStr = weddingDate.toUtc().toIso8601String().replaceAll(RegExp(r'[-:]'), '').split('.')[0] + 'Z';
-    final endDateStr = endDate.toUtc().toIso8601String().replaceAll(RegExp(r'[-:]'), '').split('.')[0] + 'Z';
+    final startDateStr = '${weddingDate.toUtc().toIso8601String().replaceAll(RegExp(r'[-:]'), '').split('.')[0]}Z';
+    final endDateStr = '${endDate.toUtc().toIso8601String().replaceAll(RegExp(r'[-:]'), '').split('.')[0]}Z';
     
     // Create Google Calendar URL
     final title = Uri.encodeComponent('Kimleng & Chunna Wedding');

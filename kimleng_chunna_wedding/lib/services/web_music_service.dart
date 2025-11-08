@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:html' as html;
-import 'dart:js' as js;
 import 'package:flutter/foundation.dart';
 
 class WebMusicService {
@@ -8,8 +8,13 @@ class WebMusicService {
   WebMusicService._internal();
 
   html.AudioElement? _audioElement;
+  StreamSubscription<html.Event>? _clickSubscription;
+  StreamSubscription<html.Event>? _touchStartSubscription;
+  StreamSubscription<html.Event>? _scrollSubscription;
+  StreamSubscription<html.KeyboardEvent>? _keyDownSubscription;
   bool _isPlaying = false;
   bool _isInitialized = false;
+  bool _listenersAttached = false;
 
   /// Initialize and start playing background music
   Future<void> startBackgroundMusic() async {
@@ -18,58 +23,58 @@ class WebMusicService {
         debugPrint('Music service already initialized');
         return;
       }
-      
+
       debugPrint('Initializing web music service...');
-      
+
       // Create HTML5 audio element
       _audioElement = html.AudioElement();
-      
+
       // Use a more robust approach for asset loading
       String audioPath = 'assets/music/i-love-you-more-than-i-can-say.mp3';
       _audioElement!.src = audioPath;
       debugPrint('🎵 Using audio path: $audioPath');
-      
+
       // Add comprehensive error handling
       _audioElement!.onError.listen((event) {
         debugPrint('❌ Audio error with path: $audioPath');
-        debugPrint('❌ Error details: ${event}');
-        
+        debugPrint('❌ Error details: $event');
+
         // Try alternative paths
         _tryAlternativePaths();
       });
-      
+
       _audioElement!.volume = 0.3; // 30% volume
       _audioElement!.loop = true;
       _audioElement!.preload = 'auto';
-      
+
       // Add event listeners
       _audioElement!.onLoadedData.listen((_) {
         debugPrint('🎵 Music file loaded successfully!');
       });
-      
+
       _audioElement!.onCanPlay.listen((_) {
         debugPrint('🎵 Music can play!');
       });
-      
+
       _audioElement!.onError.listen((event) {
-        debugPrint('❌ Audio error: ${event}');
+        debugPrint('❌ Audio error: $event');
       });
-      
+
       _audioElement!.onPlay.listen((_) {
         debugPrint('▶️ Music started playing');
         _isPlaying = true;
       });
-      
+
       _audioElement!.onPause.listen((_) {
         debugPrint('⏸️ Music paused');
         _isPlaying = false;
       });
-      
+
       _audioElement!.onEnded.listen((_) {
         debugPrint('🔚 Music ended');
         _isPlaying = false;
       });
-      
+
       // Try to start playing automatically
       try {
         await _audioElement!.play();
@@ -79,11 +84,11 @@ class WebMusicService {
         debugPrint('⚠️ Autoplay blocked by browser: $autoplayError');
         debugPrint('Music will start after user interaction');
         _isPlaying = false;
-        
+
         // Set up user interaction listeners
         _setupUserInteractionListeners();
       }
-      
+
       _isInitialized = true;
       debugPrint('Web music service initialization completed');
     } catch (e) {
@@ -122,16 +127,19 @@ class WebMusicService {
   Future<void> resumeBackgroundMusic() async {
     try {
       if (!_isInitialized) {
-        debugPrint('🔄 Music service not initialized, starting initialization...');
+        debugPrint(
+          '🔄 Music service not initialized, starting initialization...',
+        );
         await startBackgroundMusic();
         return;
       }
-      
+
       if (_audioElement != null) {
         debugPrint('🎵 Attempting to play music...');
         await _audioElement!.play();
         _isPlaying = true;
         debugPrint('▶️ Background music resumed successfully!');
+        await _removeUserInteractionListeners();
       } else {
         debugPrint('❌ Audio element is null');
       }
@@ -141,12 +149,13 @@ class WebMusicService {
       try {
         debugPrint('🔄 Attempting to recreate audio element...');
         _audioElement = html.AudioElement();
-        _audioElement!.src = 'assets/assets/music/i-love-you-more-than-i-can-say.mp3';
+        _audioElement!.src = 'assets/music/i-love-you-more-than-i-can-say.mp3';
         _audioElement!.volume = 0.3;
         _audioElement!.loop = true;
         await _audioElement!.play();
         _isPlaying = true;
         debugPrint('🎵 Music started with recreated audio element!');
+        await _removeUserInteractionListeners();
       } catch (recreateError) {
         debugPrint('❌ Failed to recreate audio element: $recreateError');
       }
@@ -178,48 +187,81 @@ class WebMusicService {
   bool get isPlaying => _isPlaying;
 
   /// Get current volume
-  double get volume => _audioElement?.volume?.toDouble() ?? 0.0;
+  double get volume => _audioElement?.volume.toDouble() ?? 0.0;
 
   /// Set up user interaction listeners to start music
   void _setupUserInteractionListeners() {
+    if (_listenersAttached) {
+      return;
+    }
+
     debugPrint('🔧 Setting up user interaction listeners...');
-    
-    void handleInteraction(String type) {
+    _listenersAttached = true;
+
+    Future<void> handleInteraction(String type) async {
       if (!_isPlaying && _audioElement != null) {
         debugPrint('👆 $type interaction detected, starting music...');
-        resumeBackgroundMusic();
+        try {
+          await resumeBackgroundMusic();
+        } catch (e) {
+          debugPrint('❌ Error during $type interaction resume: $e');
+        }
       }
     }
-    
-    // Add event listeners for user interaction
-    html.document.addEventListener('click', (event) => handleInteraction('Click'));
-    html.document.addEventListener('touchstart', (event) => handleInteraction('Touch'));
-    html.document.addEventListener('scroll', (event) => handleInteraction('Scroll'));
-    html.document.addEventListener('keydown', (event) => handleInteraction('Key'));
+
+    _clickSubscription = html.document.onClick.listen((_) {
+      handleInteraction('Click');
+    });
+    _touchStartSubscription = html.document.onTouchStart.listen((_) {
+      handleInteraction('Touch');
+    });
+    _scrollSubscription = html.document.onScroll.listen((_) {
+      handleInteraction('Scroll');
+    });
+    _keyDownSubscription = html.document.onKeyDown.listen((_) {
+      handleInteraction('Key');
+    });
   }
 
   /// Try alternative audio paths if the first one fails
   void _tryAlternativePaths() {
     if (_audioElement == null) return;
-    
+
     List<String> alternativePaths = [
-      'assets/assets/music/i-love-you-more-than-i-can-say.mp3',
+      'assets/music/i-love-you-more-than-i-can-say.mp3',
       'packages/kimleng_chunna_wedding/assets/music/i-love-you-more-than-i-can-say.mp3',
       'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav', // Fallback test audio
     ];
-    
+
     for (String path in alternativePaths) {
       debugPrint('🔄 Trying alternative path: $path');
       _audioElement!.src = path;
-      
+
       // Add a small delay to test if this path works
       Future.delayed(Duration(milliseconds: 100), () {
-        if (_audioElement != null && _audioElement!.networkState == html.MediaElement.HAVE_METADATA) {
+        if (_audioElement != null &&
+            _audioElement!.networkState == html.MediaElement.HAVE_METADATA) {
           debugPrint('✅ Audio path working: $path');
           return;
         }
       });
     }
+  }
+
+  Future<void> _removeUserInteractionListeners() async {
+    if (!_listenersAttached) {
+      return;
+    }
+
+    await _clickSubscription?.cancel();
+    await _touchStartSubscription?.cancel();
+    await _scrollSubscription?.cancel();
+    await _keyDownSubscription?.cancel();
+    _clickSubscription = null;
+    _touchStartSubscription = null;
+    _scrollSubscription = null;
+    _keyDownSubscription = null;
+    _listenersAttached = false;
   }
 
   /// Dispose resources
@@ -229,6 +271,7 @@ class WebMusicService {
         _audioElement!.pause();
         _audioElement = null;
       }
+      await _removeUserInteractionListeners();
       _isInitialized = false;
       _isPlaying = false;
       debugPrint('🗑️ Web music service disposed');

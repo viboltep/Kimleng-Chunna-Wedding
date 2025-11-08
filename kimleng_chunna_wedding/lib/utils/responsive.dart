@@ -6,11 +6,11 @@ class ResponsiveLayout extends StatelessWidget {
   final Widget? desktop;
 
   const ResponsiveLayout({
-    Key? key,
+    super.key,
     required this.mobile,
     this.tablet,
     this.desktop,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +35,12 @@ class ResponsiveText extends StatelessWidget {
   final int? maxLines;
 
   const ResponsiveText({
-    Key? key,
+    super.key,
     required this.text,
     this.style,
     this.textAlign,
     this.maxLines,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -71,12 +71,12 @@ class ResponsivePadding extends StatelessWidget {
   final EdgeInsets? desktopPadding;
 
   const ResponsivePadding({
-    Key? key,
+    super.key,
     required this.child,
     this.mobilePadding,
     this.tabletPadding,
     this.desktopPadding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -105,12 +105,12 @@ class ResponsiveGrid extends StatelessWidget {
   final double? mainAxisSpacing;
 
   const ResponsiveGrid({
-    Key? key,
+    super.key,
     required this.children,
     this.childAspectRatio,
     this.crossAxisSpacing,
     this.mainAxisSpacing,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -145,11 +145,11 @@ class ResponsiveContainer extends StatelessWidget {
   final EdgeInsets? padding;
 
   const ResponsiveContainer({
-    Key? key,
+    super.key,
     required this.child,
     this.maxWidth,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

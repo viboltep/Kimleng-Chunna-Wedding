@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/wedding_theme.dart';
 
 class WeddingAgendaSection extends StatefulWidget {
-  const WeddingAgendaSection({Key? key}) : super(key: key);
+  const WeddingAgendaSection({super.key});
 
   @override
   State<WeddingAgendaSection> createState() => _WeddingAgendaSectionState();
@@ -67,25 +67,23 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        
-                         Text(
-                               'កម្មវិធីសិរីមង្គល', // Wedding Ceremony Program
-                               style: TextStyle(
-                                 fontFamily: 'Bayon',
-                                 fontSize: 32,
-                                 fontWeight: FontWeight.w600,
-                                 color: const Color(0xFFb88527),
-                                 height: 1.3,
-                               ),
-                               textAlign: TextAlign.center,
-                             )
+                        Text(
+                              'កម្មវិធីសិរីមង្គល', // Wedding Ceremony Program
+                              style: WeddingTextStyles.bayon(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFb88527),
+                                height: 1.3,
+                              ),
+                              textAlign: TextAlign.center,
+                            )
                             .animate()
                             .fadeIn(duration: 600.ms, delay: 200.ms)
                             .slideY(begin: 0.2),
                         const SizedBox(height: 20),
                       ],
                     ),
-                    
+
                     //Date Selection Tabs
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -138,8 +136,7 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
         ),
         child: Text(
           date,
-          style: TextStyle(
-            fontFamily: 'Bayon',
+          style: WeddingTextStyles.bayon(
             fontSize: 18,
             color: isSelected
                 ? const Color(0xFFb88527)
@@ -166,8 +163,7 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
               children: [
                 Text(
                   time,
-                  style: TextStyle(
-                    fontFamily: 'Bayon',
+                  style: WeddingTextStyles.bayon(
                     fontSize: 16,
                     color: WeddingColors.textPrimary,
                     fontWeight: FontWeight.bold,
@@ -177,8 +173,7 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
                 const SizedBox(height: 5),
                 Text(
                   event,
-                  style: TextStyle(
-                    fontFamily: 'Bayon',
+                  style: WeddingTextStyles.bayon(
                     fontSize: 14,
                     color: WeddingColors.textSecondary,
                     fontStyle: FontStyle.italic,

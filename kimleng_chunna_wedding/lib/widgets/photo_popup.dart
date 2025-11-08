@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/wedding_theme.dart';
 
 class PhotoPopup extends StatefulWidget {
-  const PhotoPopup({Key? key}) : super(key: key);
+  const PhotoPopup({super.key});
 
   @override
   State<PhotoPopup> createState() => _PhotoPopupState();

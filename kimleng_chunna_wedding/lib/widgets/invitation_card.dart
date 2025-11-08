@@ -10,7 +10,7 @@ import '../widgets/footer_section.dart';
 import '../widgets/photo_popup.dart';
 
 class InvitationCard extends StatefulWidget {
-  const InvitationCard({Key? key}) : super(key: key);
+  const InvitationCard({super.key});
 
   @override
   State<InvitationCard> createState() => _InvitationCardState();

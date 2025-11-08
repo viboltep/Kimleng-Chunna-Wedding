@@ -4,7 +4,7 @@ import 'package:share_plus/share_plus.dart';
 import '../theme/wedding_theme.dart';
 
 class FooterSection extends StatelessWidget {
-  const FooterSection({Key? key}) : super(key: key);
+  const FooterSection({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -8,13 +8,13 @@ class HeartShape extends StatelessWidget {
   final double opacity;
 
   const HeartShape({
-    Key? key,
+    super.key,
     required this.size,
     required this.color,
     this.borderWidth = 1.0,
     this.borderColor = Colors.white,
     this.opacity = 1.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

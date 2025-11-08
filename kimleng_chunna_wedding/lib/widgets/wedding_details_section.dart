@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../theme/wedding_theme.dart';
 
 class WeddingDetailsSection extends StatelessWidget {
-  const WeddingDetailsSection({Key? key}) : super(key: key);
+  const WeddingDetailsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -97,14 +97,14 @@ class DetailCard extends StatelessWidget {
   final Color color;
 
   const DetailCard({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.content,
     this.actionText,
     this.onAction,
     required this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

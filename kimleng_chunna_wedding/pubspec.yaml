@@ -94,9 +94,6 @@ flutter:
     - family: Moulpali
       fonts:
         - asset: assets/fonts/Moulpali-Regular.ttf
-    - family: Bayon
-      fonts:
-        - asset: assets/fonts/Bayon-Regular.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

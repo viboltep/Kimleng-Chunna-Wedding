@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/wedding_theme.dart';
 
 class RSVPSection extends StatefulWidget {
-  const RSVPSection({Key? key}) : super(key: key);
+  const RSVPSection({super.key});
 
   @override
   State<RSVPSection> createState() => _RSVPSectionState();
