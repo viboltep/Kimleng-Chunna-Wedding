@@ -22,12 +22,14 @@ jobs:
         cache: true # Speeds up future builds
         
     - name: Install dependencies
+      working-directory: Kimleng-Chunna-Wedding/kimleng_chunna_wedding
       run: flutter pub get
       
     - name: Run tests
       run: flutter test
       
     - name: Build web app
+      working-directory: Kimleng-Chunna-Wedding/kimleng_chunna_wedding
       run: flutter build web --release --web-renderer canvaskit
       
     - name: Deploy to VPS
