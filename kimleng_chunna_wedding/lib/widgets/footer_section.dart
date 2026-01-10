@@ -15,8 +15,8 @@ class FooterSection extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            WeddingColors.primary.withOpacity(0.1),
-            WeddingColors.primary.withOpacity(0.2),
+            WeddingColors.primary.withValues(alpha: 0.1),
+            WeddingColors.primary.withValues(alpha: 0.2),
           ],
         ),
       ),
@@ -30,7 +30,7 @@ class FooterSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: WeddingColors.primary.withOpacity(0.1),
+                  color: WeddingColors.primary.withValues(alpha: 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),

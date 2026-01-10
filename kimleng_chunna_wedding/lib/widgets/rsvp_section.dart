@@ -36,8 +36,8 @@ class _RSVPSectionState extends State<RSVPSection> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            WeddingColors.accent.withOpacity(0.3),
-            WeddingColors.secondary.withOpacity(0.2),
+            WeddingColors.accent.withValues(alpha: 0.3),
+            WeddingColors.secondary.withValues(alpha: 0.2),
           ],
         ),
       ),
@@ -72,7 +72,7 @@ class _RSVPSectionState extends State<RSVPSection> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: WeddingColors.primary.withOpacity(0.1),
+                  color: WeddingColors.primary.withValues(alpha: 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),

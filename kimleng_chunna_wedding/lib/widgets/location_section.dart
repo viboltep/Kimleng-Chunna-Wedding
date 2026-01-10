@@ -21,8 +21,8 @@ class LocationSection extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            WeddingColors.secondary.withOpacity(0.05),
-            WeddingColors.primary.withOpacity(0.05),
+            WeddingColors.secondary.withValues(alpha: 0.05),
+            WeddingColors.primary.withValues(alpha: 0.05),
           ],
         ),
       ),
@@ -33,12 +33,12 @@ class LocationSection extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
             BoxShadow(
-              color: WeddingColors.secondary.withOpacity(0.1),
+              color: WeddingColors.secondary.withValues(alpha: 0.1),
               blurRadius: 30,
               offset: const Offset(0, 15),
             ),
@@ -77,10 +77,10 @@ class LocationSection extends StatelessWidget {
             Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: WeddingColors.primary.withOpacity(0.05),
+                    color: WeddingColors.primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: WeddingColors.primary.withOpacity(0.2),
+                      color: WeddingColors.primary.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -143,7 +143,7 @@ class LocationSection extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 4,
-                      shadowColor: WeddingColors.primary.withOpacity(0.3),
+                      shadowColor: WeddingColors.primary.withValues(alpha: 0.3),
                     ),
                   ),
                 )
@@ -157,7 +157,7 @@ class LocationSection extends StatelessWidget {
             Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: WeddingColors.secondary.withOpacity(0.1),
+                    color: WeddingColors.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(

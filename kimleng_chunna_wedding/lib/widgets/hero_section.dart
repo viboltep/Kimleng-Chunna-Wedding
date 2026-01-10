@@ -58,7 +58,7 @@ class _HeroSectionState extends State<HeroSection>
 
   void _updateCountdown() {
     final now = DateTime.now();
-    final weddingDate = DateTime(2026, 3, 1);
+    final weddingDate = DateTime(2025, 3, 15);
     final difference = weddingDate.difference(now);
     
     if (mounted) {
@@ -86,8 +86,8 @@ class _HeroSectionState extends State<HeroSection>
   }
 
   Future<void> _addToCalendar() async {
-    final weddingDate = DateTime(2026, 3, 1, 14, 0); // March 1st, 2026 at 2:00 PM
-    final endDate = DateTime(2026, 3, 1, 22, 0); // March 1st, 2026 at 10:00 PM
+    final weddingDate = DateTime(2025, 3, 15, 16, 0); // March 15th, 2025 at 4:00 PM
+    final endDate = DateTime(2025, 3, 15, 22, 0); // March 15th, 2025 at 10:00 PM
     
     // Format dates for calendar URL
     final startDateStr = '${weddingDate.toUtc().toIso8601String().replaceAll(RegExp(r'[-:]'), '').split('.')[0]}Z';
@@ -95,8 +95,8 @@ class _HeroSectionState extends State<HeroSection>
     
     // Create Google Calendar URL
     final title = Uri.encodeComponent('Kimleng & Chunna Wedding');
-    final details = Uri.encodeComponent('Join us in celebrating the wedding of Kimleng & Chunna!\n\nCeremony: 2:00 PM\nReception: 6:00 PM\n\nWe can\'t wait to celebrate with you!');
-    final location = Uri.encodeComponent('Wedding Venue, Phnom Penh, Cambodia');
+    final details = Uri.encodeComponent('Join us in celebrating the wedding of Kimleng & Chunna!\n\nCeremony: 4:00 PM\nReception: 6:00 PM\n\nWe can\'t wait to celebrate with you!');
+    final location = Uri.encodeComponent('Garden Palace Resort, Phnom Penh, Cambodia');
     
     final googleCalendarUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=$title&dates=$startDateStr/$endDateStr&details=$details&location=$location';
     
@@ -108,7 +108,7 @@ class _HeroSectionState extends State<HeroSection>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Wedding: March 1st, 2026 at 2:00 PM'),
+              content: Text('Wedding: March 15th, 2025 at 4:00 PM'),
               backgroundColor: WeddingColors.primary,
             ),
           );
@@ -119,7 +119,7 @@ class _HeroSectionState extends State<HeroSection>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Unable to open calendar. Please add manually: March 1st, 2026 at 2:00 PM'),
+            content: Text('Unable to open calendar. Please add manually: March 15th, 2025 at 4:00 PM'),
             backgroundColor: Colors.red,
           ),
         );
@@ -149,9 +149,9 @@ class _HeroSectionState extends State<HeroSection>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            WeddingColors.primary.withOpacity(0.05),
-            WeddingColors.secondary.withOpacity(0.1),
-            WeddingColors.accent.withOpacity(0.15),
+            WeddingColors.primary.withValues(alpha: 0.05),
+            WeddingColors.secondary.withValues(alpha: 0.1),
+            WeddingColors.accent.withValues(alpha: 0.15),
           ],
         ),
       ),
@@ -354,7 +354,7 @@ class _HeroSectionState extends State<HeroSection>
                   
                   // Date
                   Text(
-                    'March 1th, 2026',
+                    'March 15th, 2025',
                     style: WeddingTextStyles.heading3.copyWith(
                       color: WeddingColors.primary,
                     ),
@@ -369,10 +369,10 @@ class _HeroSectionState extends State<HeroSection>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
-                      color: WeddingColors.gold.withOpacity(0.1),
+                      color: WeddingColors.gold.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: WeddingColors.gold.withOpacity(0.3),
+                        color: WeddingColors.gold.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),

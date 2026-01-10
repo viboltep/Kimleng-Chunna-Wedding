@@ -61,35 +61,43 @@ class GallerySection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
-                        color: WeddingColors.primary.withOpacity(0.1),
+                        color: WeddingColors.primary.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
                     ],
                   ),
-                  child: ClipRRect(
+                    child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Stack(
                       children: [
-                        // Placeholder for actual images
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                WeddingColors.primary.withOpacity(0.3),
-                                WeddingColors.secondary.withOpacity(0.3),
-                              ],
-                            ),
-                          ),
-                          child: Center(
-                            child: Icon(
-                              Icons.photo_camera,
-                              size: 40,
-                              color: WeddingColors.white,
-                            ),
-                          ),
+                        // Actual image
+                        Image.asset(
+                          imageUrls[index],
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    WeddingColors.primary.withValues(alpha: 0.3),
+                                    WeddingColors.secondary.withValues(alpha: 0.3),
+                                  ],
+                                ),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.photo_camera,
+                                  size: 40,
+                                  color: WeddingColors.white,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                         
                         // Overlay with photo number
@@ -99,7 +107,7 @@ class GallerySection extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: WeddingColors.primary.withOpacity(0.8),
+                              color: WeddingColors.primary.withValues(alpha: 0.8),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -129,8 +137,8 @@ class GallerySection extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  WeddingColors.primary.withOpacity(0.1),
-                  WeddingColors.secondary.withOpacity(0.1),
+                  WeddingColors.primary.withValues(alpha: 0.1),
+                  WeddingColors.secondary.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
@@ -171,43 +179,82 @@ class GallerySection extends StatelessWidget {
         backgroundColor: Colors.transparent,
         child: Stack(
           children: [
-            // Background
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    WeddingColors.primary.withOpacity(0.3),
-                    WeddingColors.secondary.withOpacity(0.3),
-                  ],
-                ),
+            // Background overlay
+            GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                color: Colors.black.withValues(alpha: 0.7),
               ),
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.photo_camera,
-                      size: 80,
-                      color: WeddingColors.white,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Photo ${index + 1}',
-                      style: WeddingTextStyles.heading3.copyWith(
-                        color: WeddingColors.white,
+            ),
+            
+            // Image
+            Center(
+              child: GestureDetector(
+                onTap: () {}, // Prevent dismissal when clicking image
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.9,
+                    maxHeight: MediaQuery.of(context).size.height * 0.8,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        blurRadius: 30,
+                        offset: const Offset(0, 15),
                       ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      imageUrl,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 350,
+                          height: 350,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                WeddingColors.primary.withValues(alpha: 0.3),
+                                WeddingColors.secondary.withValues(alpha: 0.3),
+                              ],
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.photo_camera,
+                                size: 80,
+                                color: WeddingColors.white,
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Photo ${index + 1}',
+                                style: WeddingTextStyles.heading3.copyWith(
+                                  color: WeddingColors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'Image not found',
+                                style: WeddingTextStyles.body.copyWith(
+                                  color: WeddingColors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Coming Soon',
-                      style: WeddingTextStyles.body.copyWith(
-                        color: WeddingColors.white,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -218,10 +265,17 @@ class GallerySection extends StatelessWidget {
               right: 10,
               child: IconButton(
                 onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(
-                  Icons.close,
-                  color: WeddingColors.white,
-                  size: 30,
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
               ),
             ),

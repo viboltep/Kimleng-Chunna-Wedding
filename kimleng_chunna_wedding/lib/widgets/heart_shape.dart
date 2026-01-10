@@ -21,8 +21,8 @@ class HeartShape extends StatelessWidget {
     return CustomPaint(
       size: Size(size, size),
       painter: HeartPainter(
-        color: color.withOpacity(opacity),
-        borderColor: borderColor.withOpacity(opacity),
+        color: color.withValues(alpha: opacity),
+        borderColor: borderColor.withValues(alpha: opacity),
         borderWidth: borderWidth,
       ),
     );

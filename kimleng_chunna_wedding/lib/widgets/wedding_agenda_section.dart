@@ -37,8 +37,8 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            WeddingColors.primary.withOpacity(0.05),
-            WeddingColors.secondary.withOpacity(0.05),
+            WeddingColors.primary.withValues(alpha: 0.05),
+            WeddingColors.secondary.withValues(alpha: 0.05),
           ],
         ),
       ),
@@ -51,12 +51,12 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
                     BoxShadow(
-                      color: WeddingColors.primary.withOpacity(0.1),
+                      color: WeddingColors.primary.withValues(alpha: 0.1),
                       blurRadius: 30,
                       offset: const Offset(0, 15),
                     ),
@@ -68,21 +68,21 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                              'កម្មវិធីសិរីមង្គល', // Wedding Ceremony Program
-                              style: WeddingTextStyles.bayon(
-                                fontSize: 32,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFFb88527),
-                                height: 1.3,
-                              ),
-                              textAlign: TextAlign.center,
-                            )
+                          'កម្មវិធីសិរីមង្គល', // Wedding Ceremony Program
+                          style: WeddingTextStyles.bayon(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFFb88527),
+                            height: 1.3,
+                          ),
+                          textAlign: TextAlign.center,
+                        )
                             .animate()
                             .fadeIn(duration: 600.ms, delay: 200.ms)
                             .slideY(begin: 0.2),
-                        const SizedBox(height: 20),
                       ],
                     ),
+                    const SizedBox(height: 20),
 
                     //Date Selection Tabs
                     Row(
@@ -127,7 +127,7 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFFb88527).withOpacity(0.1)
+              ? const Color(0xFFb88527).withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: isSelected

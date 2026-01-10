@@ -11,6 +11,7 @@ class WeddingColors {
   static const Color gold = Color(0xFFFFD700); // Gold
   static const Color white = Color(0xFFFFFFFF); // Pure White
   static const Color lightGray = Color(0xFFF8F8F8); // Light Gray
+  static const Color darkBlue = Color(0xFF135288); // Black
 }
 
 class WeddingTextStyles {
