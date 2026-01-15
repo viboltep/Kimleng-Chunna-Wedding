@@ -29,18 +29,25 @@ class WebMusicService {
       // Create HTML5 audio element
       _audioElement = html.AudioElement();
 
-      // Use a more robust approach for asset loading
-      String audioPath = 'assets/music/i-love-you-more-than-i-can-say.mp3';
-      _audioElement!.src = audioPath;
-      debugPrint('🎵 Using audio path: $audioPath');
+      // Flutter web serves assets under "assets/<declared path>"
+      // Our pubspec declares "assets/music/", so the built URL becomes
+      // "assets/assets/music/...". We keep both primary and legacy paths and
+      // try the primary one first.
+      const String primaryAudioPath =
+          'assets/assets/music/i-love-you-more-than-i-can-say.mp3';
+      const String legacyAudioPath =
+          'assets/music/i-love-you-more-than-i-can-say.mp3';
+
+      _audioElement!.src = primaryAudioPath;
+      debugPrint('🎵 Using audio path: $primaryAudioPath');
 
       // Add comprehensive error handling
       _audioElement!.onError.listen((event) {
-        debugPrint('❌ Audio error with path: $audioPath');
+        debugPrint('❌ Audio error with primary path: $primaryAudioPath');
         debugPrint('❌ Error details: $event');
 
         // Try alternative paths
-        _tryAlternativePaths();
+        _tryAlternativePaths(primaryAudioPath, legacyAudioPath);
       });
 
       _audioElement!.volume = 0.3; // 30% volume
@@ -224,13 +231,14 @@ class WebMusicService {
   }
 
   /// Try alternative audio paths if the first one fails
-  void _tryAlternativePaths() {
+  void _tryAlternativePaths(String primaryPath, String legacyPath) {
     if (_audioElement == null) return;
 
     List<String> alternativePaths = [
-      'assets/music/i-love-you-more-than-i-can-say.mp3',
+      primaryPath,
+      legacyPath,
+      // Package-style path used when assets are bundled differently
       'packages/kimleng_chunna_wedding/assets/music/i-love-you-more-than-i-can-say.mp3',
-      'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav', // Fallback test audio
     ];
 
     for (String path in alternativePaths) {
