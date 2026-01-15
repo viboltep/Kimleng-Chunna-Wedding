@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:iconsax/iconsax.dart';
+import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
 
 /// Figma-inspired welcome gate shown before entering the main invitation.
@@ -83,7 +86,6 @@ class _WelcomeCardState extends State<WelcomeCard> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  
                   const SizedBox(height: 20),
                   // Khmer headline
                   Text(
@@ -105,7 +107,9 @@ class _WelcomeCardState extends State<WelcomeCard> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _loading ? 'Loading invitation…' : 'Invitation for: $_guestName',
+                    _loading
+                        ? 'Loading invitation…'
+                        : 'Invitation for: $_guestName',
                     textAlign: TextAlign.center,
                     style: WeddingTextStyles.body.copyWith(
                       color: accentColor,
@@ -113,15 +117,18 @@ class _WelcomeCardState extends State<WelcomeCard> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 28),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       children: [
+                        //Guest Name
                         Text(
                           'លោក ទេព វិបុល',
                           textAlign: TextAlign.center,
@@ -130,7 +137,6 @@ class _WelcomeCardState extends State<WelcomeCard> {
                             fontSize: 28,
                           ),
                         ),
-                        
                       ],
                     ),
                   ),
@@ -156,7 +162,11 @@ class _WelcomeCardState extends State<WelcomeCard> {
                   SizedBox(
                     width: 240,
                     child: ElevatedButton(
-                      onPressed: widget.onOpen,
+                      onPressed: () async {
+                        // Start music after user interaction to avoid autoplay block.
+                        await WebMusicService().resumeBackgroundMusic();
+                        widget.onOpen();
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: accentColor,
                         foregroundColor: Colors.white,
@@ -176,10 +186,21 @@ class _WelcomeCardState extends State<WelcomeCard> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(Icons.touch_app, size: 20, color: Colors.white),
-                          SizedBox(width: 10),
-                          Text('សូមចុចបើកការអញ្ចើញ'),
+                        children: [
+                          const Icon(
+                            Iconsax.direct_inbox,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'សូមចុចបើកការអញ្ចើញ',
+                            style: GoogleFonts.dangrek(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
                         ],
                       ),
                     ),

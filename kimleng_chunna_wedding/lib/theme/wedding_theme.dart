@@ -15,57 +15,119 @@ class WeddingColors {
 }
 
 class WeddingTextStyles {
-  static TextStyle get heading1 => GoogleFonts.playfairDisplay(
-    fontSize: 48,
-    fontWeight: FontWeight.bold,
-    color: WeddingColors.textPrimary,
-    height: 1.2,
-  );
+  /// Allows tests to disable Google Fonts to avoid network/font bundle access.
+  static bool enableGoogleFonts = true;
+  static TextStyle get heading1 => _safeTextStyle(
+        () => GoogleFonts.playfairDisplay(
+          fontSize: 48,
+          fontWeight: FontWeight.bold,
+          color: WeddingColors.textPrimary,
+          height: 1.2,
+        ),
+        fallback: const TextStyle(
+          fontSize: 48,
+          fontWeight: FontWeight.bold,
+          color: WeddingColors.textPrimary,
+          height: 1.2,
+        ),
+      );
 
-  static TextStyle get heading2 => GoogleFonts.playfairDisplay(
-    fontSize: 32,
-    fontWeight: FontWeight.w600,
-    color: WeddingColors.textPrimary,
-    height: 1.3,
-  );
+  static TextStyle get heading2 => _safeTextStyle(
+        () => GoogleFonts.koulen(
+          fontSize: 64,
+          fontWeight: FontWeight.w600,
+          color: WeddingColors.textPrimary,
+          height: 1.3,
+        ),
+        fallback: const TextStyle(
+          fontSize: 64,
+          fontWeight: FontWeight.w600,
+          color: WeddingColors.textPrimary,
+          height: 1.3,
+        ),
+      );
 
-  static TextStyle get heading3 => GoogleFonts.playfairDisplay(
-    fontSize: 24,
-    fontWeight: FontWeight.w500,
-    color: WeddingColors.textPrimary,
-    height: 1.4,
-  );
+  static TextStyle get heading3 => _safeTextStyle(
+        () => GoogleFonts.koulen(
+          fontSize: 32,
+          fontWeight: FontWeight.w500,
+          color: WeddingColors.textPrimary,
+          height: 1.4,
+        ),
+        fallback: const TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.w500,
+          color: WeddingColors.textPrimary,
+          height: 1.4,
+        ),
+      );
 
-  static TextStyle get body => GoogleFonts.crimsonText(
-    fontSize: 16,
-    color: WeddingColors.textSecondary,
-    height: 1.6,
-  );
+  static TextStyle get body => _safeTextStyle(
+        () => GoogleFonts.crimsonText(
+          fontSize: 16,
+          color: WeddingColors.textSecondary,
+          height: 1.6,
+        ),
+        fallback: const TextStyle(
+          fontSize: 16,
+          color: WeddingColors.textSecondary,
+          height: 1.6,
+        ),
+      );
 
-  static TextStyle get bodyLarge => GoogleFonts.crimsonText(
-    fontSize: 18,
-    color: WeddingColors.textSecondary,
-    height: 1.6,
-  );
+  static TextStyle get bodyLarge => _safeTextStyle(
+        () => GoogleFonts.crimsonText(
+          fontSize: 18,
+          color: WeddingColors.textSecondary,
+          height: 1.6,
+        ),
+        fallback: const TextStyle(
+          fontSize: 18,
+          color: WeddingColors.textSecondary,
+          height: 1.6,
+        ),
+      );
 
-  static TextStyle get caption => GoogleFonts.crimsonText(
-    fontSize: 14,
-    color: WeddingColors.textSecondary,
-    fontStyle: FontStyle.italic,
-    height: 1.5,
-  );
+  static TextStyle get caption => _safeTextStyle(
+        () => GoogleFonts.crimsonText(
+          fontSize: 14,
+          color: WeddingColors.textSecondary,
+          fontStyle: FontStyle.italic,
+          height: 1.5,
+        ),
+        fallback: const TextStyle(
+          fontSize: 14,
+          color: WeddingColors.textSecondary,
+          fontStyle: FontStyle.italic,
+          height: 1.5,
+        ),
+      );
 
-  static TextStyle get button => GoogleFonts.crimsonText(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: WeddingColors.white,
-  );
+  static TextStyle get button => _safeTextStyle(
+        () => GoogleFonts.crimsonText(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: WeddingColors.white,
+        ),
+        fallback: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: WeddingColors.white,
+        ),
+      );
 
-  static TextStyle get small => GoogleFonts.crimsonText(
-    fontSize: 12,
-    color: WeddingColors.textSecondary,
-    height: 1.4,
-  );
+  static TextStyle get small => _safeTextStyle(
+        () => GoogleFonts.crimsonText(
+          fontSize: 12,
+          color: WeddingColors.textSecondary,
+          height: 1.4,
+        ),
+        fallback: const TextStyle(
+          fontSize: 12,
+          color: WeddingColors.textSecondary,
+          height: 1.4,
+        ),
+      );
 
   static TextStyle bayon({
     double fontSize = 16,
@@ -76,15 +138,38 @@ class WeddingTextStyles {
     double? letterSpacing,
     TextDecoration? decoration,
   }) {
-    return GoogleFonts.bayon(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color ?? WeddingColors.textPrimary,
-      height: height,
-      fontStyle: fontStyle,
-      letterSpacing: letterSpacing,
-      decoration: decoration,
+    return _safeTextStyle(
+      () => GoogleFonts.bayon(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color ?? WeddingColors.textPrimary,
+        height: height,
+        fontStyle: fontStyle,
+        letterSpacing: letterSpacing,
+        decoration: decoration,
+      ),
+      fallback: TextStyle(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color ?? WeddingColors.textPrimary,
+        height: height,
+        fontStyle: fontStyle,
+        letterSpacing: letterSpacing,
+        decoration: decoration,
+      ),
     );
+  }
+
+  static TextStyle _safeTextStyle(
+    TextStyle Function() build, {
+    required TextStyle fallback,
+  }) {
+    if (!enableGoogleFonts) return fallback;
+    try {
+      return build();
+    } catch (_) {
+      return fallback;
+    }
   }
 }
 
@@ -114,6 +199,12 @@ class WeddingTheme {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           textStyle: WeddingTextStyles.button,
         ),
+      ),
+      scrollbarTheme: ScrollbarThemeData(
+        thumbColor: WidgetStateProperty.all(const Color(0xFFB88527)),
+        trackColor: WidgetStateProperty.all(WeddingColors.lightGray),
+        thickness: WidgetStateProperty.all(6),
+        radius: const Radius.circular(12),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(

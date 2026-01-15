@@ -143,6 +143,7 @@ class _RSVPSectionState extends State<RSVPSection> {
                           value: _isAttending,
                           onChanged: (value) => setState(() => _isAttending = value),
                           activeColor: WeddingColors.primary,
+                          activeThumbColor: WeddingColors.primary,
                         ),
                         Text(
                           _isAttending ? 'Yes' : 'No',

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use
+
 import 'dart:async';
 import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
@@ -56,6 +58,7 @@ class WebMusicService {
       _audioElement!.volume = 0.3; // 30% volume
       _audioElement!.loop = true;
       _audioElement!.preload = 'auto';
+      _audioElement!.autoplay = false; // avoid autoplay errors on web
 
       // Add event listeners
       _audioElement!.onLoadedData.listen((_) {
@@ -85,19 +88,9 @@ class WebMusicService {
         _isPlaying = false;
       });
 
-      // Try to start playing automatically
-      try {
-        await _audioElement!.play();
-        _isPlaying = true;
-        debugPrint('🎵 Background music started automatically!');
-      } catch (autoplayError) {
-        debugPrint('⚠️ Autoplay blocked by browser: $autoplayError');
-        debugPrint('Music will start after user interaction');
-        _isPlaying = false;
-
-        // Set up user interaction listeners
-        _setupUserInteractionListeners();
-      }
+      // Do not attempt autoplay; rely on explicit user interaction
+      _isPlaying = false;
+      _setupUserInteractionListeners();
 
       _isInitialized = true;
       debugPrint('Web music service initialization completed');

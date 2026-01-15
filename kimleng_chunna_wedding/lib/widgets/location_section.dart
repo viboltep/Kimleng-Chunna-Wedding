@@ -212,8 +212,7 @@ class LocationSection extends StatelessWidget {
         );
       }
     } catch (e) {
-      print('Error opening Google Maps: $e');
-      // You could show a snackbar or dialog here to inform the user
+      debugPrint('Error opening Google Maps: $e');
     }
   }
 }
