@@ -38,9 +38,9 @@ class MusicService {
       debugPrint('Release mode set successfully');
       
       // Try to start playing the background music
-      debugPrint('Attempting to play music file: assets/music/i-love-you-more-than-i-can-say.mp3');
+      debugPrint('Attempting to play music file: assets/music/plov-chivit-rum-knea.mp3');
       try {
-        await _audioPlayer.play(AssetSource('assets/music/i-love-you-more-than-i-can-say.mp3'));
+        await _audioPlayer.play(AssetSource('assets/music/plov-chivit-rum-knea.mp3'));
         _isPlaying = true;
         debugPrint('🎵 Background music started successfully!');
       } catch (autoplayError) {
@@ -93,7 +93,7 @@ class MusicService {
       debugPrint('Error resuming background music: $e');
       // If resume fails, try to play from start
       try {
-        await _audioPlayer.play(AssetSource('assets/music/i-love-you-more-than-i-can-say.mp3'));
+        await _audioPlayer.play(AssetSource('assets/music/plov-chivit-rum-knea.mp3'));
         _isPlaying = true;
         debugPrint('Background music started after resume failure');
       } catch (playError) {

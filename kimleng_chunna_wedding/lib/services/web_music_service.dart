@@ -15,6 +15,8 @@ class WebMusicService {
   bool _isPlaying = false;
   bool _isInitialized = false;
   bool _listenersAttached = false;
+  static const String _audioFileName = 'plov-chivit-rum-knea.mp3';
+  static final String _encodedAudioFileName = Uri.encodeComponent(_audioFileName);
 
   /// Initialize and start playing background music
   Future<void> startBackgroundMusic() async {
@@ -29,14 +31,15 @@ class WebMusicService {
       // Create HTML5 audio element
       _audioElement = html.AudioElement();
 
+      // Use URL-encoded filename to avoid issues with Unicode in web asset URLs.
       // Flutter web serves assets under "assets/<declared path>"
       // Our pubspec declares "assets/music/", so the built URL becomes
       // "assets/assets/music/...". We keep both primary and legacy paths and
       // try the primary one first.
-      const String primaryAudioPath =
-          'assets/assets/music/i-love-you-more-than-i-can-say.mp3';
-      const String legacyAudioPath =
-          'assets/music/i-love-you-more-than-i-can-say.mp3';
+      final String primaryAudioPath =
+          'assets/assets/music/$_encodedAudioFileName';
+      final String legacyAudioPath =
+          'assets/music/$_encodedAudioFileName';
 
       _audioElement!.src = primaryAudioPath;
       debugPrint('🎵 Using audio path: $primaryAudioPath');
@@ -156,7 +159,7 @@ class WebMusicService {
       try {
         debugPrint('🔄 Attempting to recreate audio element...');
         _audioElement = html.AudioElement();
-        _audioElement!.src = 'assets/music/i-love-you-more-than-i-can-say.mp3';
+        _audioElement!.src = 'assets/music/$_encodedAudioFileName';
         _audioElement!.volume = 0.3;
         _audioElement!.loop = true;
         await _audioElement!.play();
@@ -238,7 +241,7 @@ class WebMusicService {
       primaryPath,
       legacyPath,
       // Package-style path used when assets are bundled differently
-      'packages/kimleng_chunna_wedding/assets/music/i-love-you-more-than-i-can-say.mp3',
+      'packages/kimleng_chunna_wedding/assets/music/$_encodedAudioFileName',
     ];
 
     for (String path in alternativePaths) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'theme/wedding_theme.dart';
-import 'widgets/invitation_card.dart';
+import 'widgets/home_screen.dart';
+import 'widgets/welcome_card.dart';
 import 'services/web_music_service.dart';
 
 void main() async {
@@ -20,8 +21,35 @@ class WeddingApp extends StatelessWidget {
     return MaterialApp(
       title: 'Kimleng & Chunna Wedding',
       theme: WeddingTheme.lightTheme,
-      home: const InvitationCard(),
+      home: const EntryFlow(),
       debugShowCheckedModeBanner: false,
     );
+  }
+}
+
+/// Simple flow controller that shows the Figma-style welcome card first,
+/// then transitions to the main invitation/home page after user taps continue.
+class EntryFlow extends StatefulWidget {
+  const EntryFlow({super.key});
+
+  @override
+  State<EntryFlow> createState() => _EntryFlowState();
+}
+
+class _EntryFlowState extends State<EntryFlow> {
+  bool _showHome = false;
+
+  void _openHome() {
+    setState(() {
+      _showHome = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showHome) {
+      return const HomeScreen();
+    }
+    return WelcomeCard(onOpen: _openHome);
   }
 }

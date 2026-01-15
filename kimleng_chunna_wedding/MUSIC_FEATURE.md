@@ -29,7 +29,7 @@ The wedding invitation website now includes automatic background music that star
    - Positioned at bottom-left for easy access
 
 ### Music File
-- **File**: `assets/music/i-love-you-more-than-i-can-say.mp3`
+- **File**: `assets/music/plov-chivit-rum-knea.mp3`
 - **Format**: MP3 (web-compatible)
 - **Usage**: Automatically loaded as an asset
 
