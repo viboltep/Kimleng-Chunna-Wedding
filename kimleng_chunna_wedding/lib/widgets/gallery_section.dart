@@ -9,27 +9,15 @@ class GallerySection extends StatelessWidget {
 
   // Updated gallery set using the newly added photos (assets.dart lines 22-42)
   static const List<String> imageUrls = [
-    Assets.photo011A6403,
-    Assets.photo011A6428,
-    Assets.photo011A6479,
-    Assets.photo011A6483,
-    Assets.photo011A6948,
-    Assets.photo078A4826,
-    Assets.photo078A4857,
-    Assets.photo078A5033,
-    Assets.photo078A5077,
-    Assets.photo078A5193,
-    Assets.photo078A5200,
-    Assets.photo078A5208,
-    Assets.photo0Y9A6298,
-    Assets.photo0Y9A6340,
-    Assets.photo0Y9A6342,
-    Assets.photo0Y9A6351,
-    Assets.photo0Y9A6498,
-    Assets.photo0Y9A6755,
-    Assets.photo0Y9A6878,
-    Assets.photo0Y9A6937,
-    Assets.photo0Y9A6984,
+    Assets.photo1,
+    Assets.photo2,
+    Assets.photo3,
+    Assets.photo4,
+    Assets.photo5,
+    Assets.photo6,
+    Assets.photo7,
+    Assets.photo8,
+    
   ];
 
   @override

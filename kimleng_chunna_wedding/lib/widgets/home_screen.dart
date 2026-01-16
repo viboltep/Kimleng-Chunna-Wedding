@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,17 +9,19 @@ import '../constants/assets.dart';
 import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
 import '../utils/responsive.dart';
-import 'package:latlong2/latlong.dart';
+import 'map_embed_stub.dart'
+    if (dart.library.html) 'map_embed_web.dart'
+    as map_embed;
 
 const List<String> _galleryImages = [
-  Assets.photo0Y9A6340,
-  Assets.photo0Y9A6755,
-  Assets.photo0Y9A6984,
-  Assets.photo078A5077,
-  Assets.photo0Y9A6878,
-  Assets.photo0Y9A6498,
-  Assets.photo011A6483,
-  Assets.photo011A6948,
+  Assets.photo1,
+  Assets.photo2,
+  Assets.photo3,
+  Assets.photo4,
+  Assets.photo5,
+  Assets.photo6,
+  Assets.photo7,
+  Assets.photo8,
 ];
 
 /// Desktop-first home screen aligned to the Figma “Home” frame (11:51).
@@ -56,9 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
             final screenWidth = MediaQuery.of(dialogContext).size.width;
             final screenHeight = MediaQuery.of(dialogContext).size.height;
             final isNarrow = screenWidth < 700;
-            final maxWidth = isNarrow ? screenWidth - 24 : 720.0;
-            final viewportHeight =
-                (screenHeight * 0.8).clamp(320.0, isNarrow ? 540.0 : 620.0);
+            final maxWidth = isNarrow ? screenWidth : 720.0;
+            final viewportHeight = isNarrow
+                ? (screenHeight * 0.9).clamp(360.0, screenHeight)
+                : (screenHeight * 0.8).clamp(320.0, 620.0);
 
             return Dialog(
               backgroundColor: Colors.transparent,
@@ -83,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (context, idx) => Center(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
-                            maxWidth: maxWidth,
+                            maxWidth: isNarrow ? screenWidth : maxWidth,
                             maxHeight: viewportHeight,
                           ),
                           child: ClipRRect(
@@ -108,16 +110,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     Positioned(
-                      top: 32,
+                      bottom: 18,
+                      right: 16,
                       child: Container(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.6),
-                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.black.withValues(alpha: 0.65),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          '${currentIndex + 1} / ${_galleryImages.length}',
+                          'រូបភាព ${currentIndex + 1} / ${_galleryImages.length}',
                           style: WeddingTextStyles.body.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -132,8 +137,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           iconSize: 34,
                           color: Colors.white,
                           style: IconButton.styleFrom(
-                            backgroundColor:
-                                Colors.black.withValues(alpha: 0.3),
+                            backgroundColor: Colors.black.withValues(
+                              alpha: 0.3,
+                            ),
                           ),
                           onPressed: currentIndex > 0
                               ? () => goTo(currentIndex - 1)
@@ -148,8 +154,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           iconSize: 34,
                           color: Colors.white,
                           style: IconButton.styleFrom(
-                            backgroundColor:
-                                Colors.black.withValues(alpha: 0.3),
+                            backgroundColor: Colors.black.withValues(
+                              alpha: 0.3,
+                            ),
                           ),
                           onPressed: currentIndex < _galleryImages.length - 1
                               ? () => goTo(currentIndex + 1)
@@ -239,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             child: ResponsiveContainer(
               maxWidth: 1200,
               child: Column(
@@ -259,9 +266,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 48),
                   _ParentMessages(),
                   const SizedBox(height: 48),
-                  _ThankYou(),
-                  const SizedBox(height: 48),
+
                   _BottomNote(),
+                  _FooterNote(),
                 ],
               ),
             ),
@@ -292,152 +299,156 @@ class _HeroInvite extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 20),
-          Text(
-            'សិរីមង្គលអាពាហ៍ពិពាហ៍',
-            textAlign: TextAlign.center,
-            style: WeddingTextStyles.heading2.copyWith(
-              color: const Color(0xFFB88527),
-              fontSize: 32,
-            ),
-          ),
-          const SizedBox(height: 12),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 700;
-              if (isNarrow) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: AssetImage(Assets.photo0Y9A6878),
-                      radius: 80,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'សៀង គឹមឡេង',
-                      textAlign: TextAlign.center,
-                      style: WeddingTextStyles.heading2.copyWith(
-                        color: const Color(0xFFB88527),
-                        fontSize: 26,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'និង',
-                      textAlign: TextAlign.center,
-                      style: WeddingTextStyles.body.copyWith(
-                        color: const Color(0xFF6F4C0B),
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'លឹម ជូណា',
-                      textAlign: TextAlign.center,
-                      style: WeddingTextStyles.heading2.copyWith(
-                        color: const Color(0xFFB88527),
-                        fontSize: 26,
-                      ),
-                    ),
-                  ],
-                );
-              }
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'សិរីមង្គលអាពាហ៍ពិពាហ៍',
+                textAlign: TextAlign.center,
+                style: WeddingTextStyles.heading2.copyWith(
+                  color: const Color(0xFFB88527),
+                  fontSize: 32,
+                ),
+              ),
+              const SizedBox(height: 12),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isNarrow = constraints.maxWidth < 700;
+                  if (isNarrow) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage(Assets.photo8),
+                          radius: 80,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'សៀង គឹមឡេង',
+                          textAlign: TextAlign.center,
+                          style: WeddingTextStyles.heading2.copyWith(
+                            color: const Color(0xFFB88527),
+                            fontSize: 26,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'និង',
+                          textAlign: TextAlign.center,
+                          style: WeddingTextStyles.body.copyWith(
+                            color: const Color(0xFF6F4C0B),
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'លឹម ជូណា',
+                          textAlign: TextAlign.center,
+                          style: WeddingTextStyles.heading2.copyWith(
+                            color: const Color(0xFFB88527),
+                            fontSize: 26,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
 
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'សៀង គឹមឡេង',
+                          textAlign: TextAlign.center,
+                          style: WeddingTextStyles.heading2.copyWith(
+                            color: const Color(0xFFB88527),
+                            fontSize: 30,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 32),
+                      CircleAvatar(
+                        backgroundImage: AssetImage(Assets.photo8),
+                        radius: 100,
+                      ),
+                      const SizedBox(width: 32),
+                      Flexible(
+                        child: Text(
+                          'លឹម ជូណា',
+                          textAlign: TextAlign.center,
+                          style: WeddingTextStyles.heading2.copyWith(
+                            color: const Color(0xFFB88527),
+                            fontSize: 30,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Flexible(
-                    child: Text(
-                      'សៀង គឹមឡេង',
-                      textAlign: TextAlign.center,
-                      style: WeddingTextStyles.heading2.copyWith(
-                        color: const Color(0xFFB88527),
-                        fontSize: 30,
-                      ),
+                  Text(
+                    'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
+                    textAlign: TextAlign.center,
+                    style: WeddingTextStyles.heading3.copyWith(
+                      color: const Color(0xFFB88527),
+                      fontSize: 22,
                     ),
                   ),
-                  const SizedBox(width: 32),
-                  CircleAvatar(
-                    backgroundImage: AssetImage(Assets.photo0Y9A6878),
-                    radius: 100,
-                  ),
-                  const SizedBox(width: 32),
-                  Flexible(
-                    child: Text(
-                      'លឹម ជូណា',
-                      textAlign: TextAlign.center,
-                      style: WeddingTextStyles.heading2.copyWith(
-                        color: const Color(0xFFB88527),
-                        fontSize: 30,
-                      ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'ភោជនីយដ្ឋាន មហារមង្គល',
+                    textAlign: TextAlign.center,
+                    style: WeddingTextStyles.bodyLarge.copyWith(
+                      color: const Color(0xFF6F4C0B),
+                      fontSize: 18,
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  Text(
+                    countdown,
+                    textAlign: TextAlign.center,
+                    style: WeddingTextStyles.heading3.copyWith(
+                      color: const Color(0xFF6F4C0B),
+                      fontSize: 26,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _CalendarButton(),
                 ],
-              );
-            },
+              ),
+            ],
           ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-                Text(
-                  'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
-                  textAlign: TextAlign.center,
-                  style: WeddingTextStyles.heading3.copyWith(
-                    color: const Color(0xFFB88527),
-                    fontSize: 22,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'ភោជនីយដ្ឋាន មហារមង្គល',
-                  textAlign: TextAlign.center,
-                  style: WeddingTextStyles.bodyLarge.copyWith(
-                    color: const Color(0xFF6F4C0B),
-                    fontSize: 18,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  countdown,
-                  textAlign: TextAlign.center,
-                  style: WeddingTextStyles.heading3.copyWith(
-                    color: const Color(0xFF6F4C0B),
-                    fontSize: 26,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _CalendarButton(),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
 class _MapSection extends StatelessWidget {
+  const _MapSection({super.key});
+
+  static bool _mapViewRegistered = false;
+
   @override
   Widget build(BuildContext context) {
     const gold = Color(0xFFB88527);
     const brown = Color(0xFF6F4C0B);
     const mapUrl = 'https://maps.app.goo.gl/Kz7FxgiKve5MyiMZ7';
-    // Venue coordinates
-    const venueLatLng = LatLng(13.1277753, 104.3382257);
+    const embedUrl =
+        'https://www.google.com/maps?q=13.1277753,104.3382257&hl=en&z=15&output=embed';
 
-    return Container(
-      padding: const EdgeInsets.all(24),
+    final mapCard = Container(
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -468,59 +479,14 @@ class _MapSection extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             'ភោជនីយដ្ឋាន មហារមង្គល\nPhnom Penh, Cambodia',
-            style: WeddingTextStyles.body.copyWith(
-              color: brown,
-              height: 1.5,
-            ),
+            style: WeddingTextStyles.body.copyWith(color: brown, height: 1.5),
           ),
           const SizedBox(height: 18),
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: SizedBox(
-              height: 320,
-              child: FlutterMap(
-                options: const MapOptions(
-                  initialCenter: venueLatLng,
-                  initialZoom: 15.5,
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'com.kimlengchunna.wedding',
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        width: 80,
-                        height: 80,
-                        point: venueLatLng,
-                        alignment: Alignment.center,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.15),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: CircleAvatar(
-                            radius: 28,
-                            backgroundColor: Colors.white,
-                            child: CircleAvatar(
-                              radius: 24,
-                              backgroundImage: AssetImage(Assets.couple1),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              height: 200,
+              child: map_embed.buildGoogleMapView(embedUrl),
             ),
           ),
           const SizedBox(height: 18),
@@ -553,14 +519,189 @@ class _MapSection extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: gold,
                 foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 3,
               ),
             ),
+          ),
+        ],
+      ),
+    );
+
+    final dressCard = Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: _DressCodeCard(gold: gold, brown: brown),
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 900;
+        if (isNarrow) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [mapCard, const SizedBox(height: 18), dressCard],
+          );
+        }
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 3, child: mapCard),
+            const SizedBox(width: 20),
+            Expanded(flex: 2, child: dressCard),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _DressCodeCard extends StatelessWidget {
+  const _DressCodeCard({required this.gold, required this.brown});
+
+  final Color gold;
+  final Color brown;
+
+  @override
+  Widget build(BuildContext context) {
+    final swatches = [
+      ('Gold / Champagne', '#D5A24A', const Color(0xFFD5A24A)),
+      ('Deep Maroon', '#5B2C2C', const Color(0xFF5B2C2C)),
+      ('Ivory / White', '#F7F3EB', const Color(0xFFF7F3EB)),
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: gold.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: gold.withValues(alpha: 0.18)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Iconsax.brush, color: gold, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Dress Code',
+                style: WeddingTextStyles.heading3.copyWith(
+                  color: gold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'ពាក់ពណ៌សម្លៀកបំពាក់បែបព្រះរាជវាំង៖ ស • ឬស្វាយចែងគគីរ • ស និងមរ្នូន',
+            style: WeddingTextStyles.body.copyWith(color: brown, height: 1.5),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: swatches
+                .map((s) => _ColorChip(label: s.$1, hex: s.$2, color: s.$3))
+                .toList(),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Gentlemen: suit or traditional silk in gold/neutral.\nLadies: elegant Khmer silk in gold, maroon, or ivory tones.',
+            style: WeddingTextStyles.body.copyWith(
+              color: brown.withValues(alpha: 0.9),
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ColorChip extends StatelessWidget {
+  const _ColorChip({
+    required this.label,
+    required this.hex,
+    required this.color,
+  });
+
+  final String label;
+  final String hex;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 22,
+            height: 22,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.12),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: WeddingTextStyles.body.copyWith(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                hex,
+                style: WeddingTextStyles.body.copyWith(
+                  color: Colors.black54,
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -615,7 +756,8 @@ class _CalendarButton extends StatelessWidget {
       '&dates=$startDate/$endDateExclusive',
     );
 
-    final icsContent = '''
+    final icsContent =
+        '''
 BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//KimlengChunnaWedding//EN
@@ -639,10 +781,12 @@ END:VCALENDAR
       final target = kIsWeb
           ? googleCalendarUri
           : Platform.isIOS
-              ? icsUri
-              : googleCalendarUri;
-      final success =
-          await launchUrl(target, mode: LaunchMode.externalApplication);
+          ? icsUri
+          : googleCalendarUri;
+      final success = await launchUrl(
+        target,
+        mode: LaunchMode.externalApplication,
+      );
       if (!success) {
         throw Exception('Unable to open calendar');
       }
@@ -660,6 +804,23 @@ END:VCALENDAR
 class _ScheduleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    const gold = Color(0xFFB88527);
+    const brown = Color(0xFF6F4C0B);
+
+    const dayOneTitle = 'ថ្ងៃទី១៖ ថ្ងៃសៅរ៍ ទី២៨ ខែកុម្ភៈ ឆ្នាំ ២០២៦';
+    const dayOneItems = [
+      'ពិធីក្រុងពិលី • ពិធីកាត់សក់បង្កក់សិរី • ពិធីសូត្រមន្តចម្រើនព្រះបរិត្ត',
+      'ពិធីកាត់ជំនួន (កំណត់) ចូលរោងជ័យ ជួបខាន់ស្លា',
+      'អញ្ជើញភ្ញៀវកិត្តិយសទទួលទានអាហារពេលព្រឹក',
+      'ពិធីស្រាសំពះផ្ទឹម កាត់ខាន់ស្លា ពិលពាន',
+    ];
+
+    const dayTwoTitle = 'ថ្ងៃទី២៖ ថ្ងៃអាទិត្យ ទី០១ ខែមីនា ឆ្នាំ ២០២៦';
+    const dayTwoItems = [
+      'ជួបជុំបងប្អូនញាតិមិត្ត និងភ្ញៀវកិត្តិយស រៀបចំហែរជំនួន',
+      'អញ្ជើញ បងប្អូនញាតិមិត្ត និងភ្ញៀវកិត្តិយស ទទួលបានអាហារពេលល្ងាច',
+    ];
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -680,28 +841,110 @@ class _ScheduleCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'កម្មវិធីមង្គលការ',
-                  style: WeddingTextStyles.heading3.copyWith(
-                    color: const Color(0xFFB88527),
-                    fontSize: 22,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: gold.withValues(alpha: 0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Iconsax.calendar, color: gold, size: 18),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'កម្មវិធីមង្គលការ',
+                      style: WeddingTextStyles.heading3.copyWith(
+                        color: gold,
+                        fontSize: 22,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                _AgendaDayCard(
+                  title: dayOneTitle,
+                  items: dayOneItems,
+                  accent: gold,
+                  textColor: brown,
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  'ថ្ងៃទី១៖ ថ្ងៃសៅរ៍ ទី២៨ ខែកុម្ភៈ ឆ្នាំ ២០២៦\n• ពិធីក្រុងពិលី • ពិធីកាត់សក់បង្កក់សិរី • ពិធីសូត្រមន្តចម្រើនព្រះបរិត្ត\n• ពិធីកាត់ជំនួន (កំណត់) ចូលរោងជ័យ ជួបខាន់ស្លា • អញ្ជើញភ្ញៀវកិត្តិយសទទួលទានអាហារពេលព្រឹក\n• ពិធីស្រាសំពះផ្ទឹម កាត់ខាន់ស្លា ពិលពាន',
-                  style: WeddingTextStyles.body.copyWith(
-                    color: const Color(0xFF6F4C0B),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'ថ្ងៃទី២៖ ថ្ងៃអាទិត្យ ទី០១ ខែមីនា ឆ្នាំ២០២៦\n• ជួបជុំបងប្អូនញាតិមិត្ត និងភ្ញៀវកិត្តិយស រៀបចំហែរជំនួន\n• អញ្ជើញ បងប្អូនញាតិមិត្ត និងភ្ញៀវកិត្តិយស ទទួលបានអាហារពេលល្ងាច',
-                  style: WeddingTextStyles.body.copyWith(
-                    color: const Color(0xFF6F4C0B),
-                  ),
+                _AgendaDayCard(
+                  title: dayTwoTitle,
+                  items: dayTwoItems,
+                  accent: gold,
+                  textColor: brown,
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AgendaDayCard extends StatelessWidget {
+  const _AgendaDayCard({
+    required this.title,
+    required this.items,
+    required this.accent,
+    required this.textColor,
+  });
+
+  final String title;
+  final List<String> items;
+  final Color accent;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: accent.withValues(alpha: 0.18)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: WeddingTextStyles.heading3.copyWith(
+              color: accent,
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: 10),
+          ...items.map(
+            (line) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 6),
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: accent,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      line,
+                      style: WeddingTextStyles.body.copyWith(
+                        color: textColor,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -738,10 +981,7 @@ class _GalleryCollage extends StatelessWidget {
               onTap: () => onImageTap(index),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  _galleryImages[index],
-                  fit: BoxFit.cover,
-                ),
+                child: Image.asset(_galleryImages[index], fit: BoxFit.cover),
               ),
             ),
           ),
@@ -760,22 +1000,36 @@ class _LoveStorySection extends StatelessWidget {
 
     final moments = [
       (
-        title: 'First Hello',
-        date: '2018 · Phnom Penh',
-        detail: 'Met through mutual friends and bonded over coffee and music.',
-        image: Assets.couple2,
+        title: 'Childhood Friends to Soulmates',
+        titleKhmer: 'មិត្តភក្តិកុមារដល់អ្នកជីវិត',
+        date: '',
+        detail: 'From childhood friends to soulmates — some loves are miracles, not accidents.',
+        detailKhmer: 'ពីមិត្តភក្តិកុមារទៅជាអ្នកជីវិត — សេចក្តីស្រឡាញ់មួយចំនួនគឺជាអច្ឆរិយៈ មិនមែនជារឿងចៃដន្យទេ។',
+        image: Assets.story1,
       ),
       (
-        title: 'The Promise',
-        date: '2023 · Siem Reap',
-        detail: 'A sunrise visit to Angkor Wat sealed a shared dream for life.',
-        image: Assets.couple3,
+        title: 'Believing in Love Again',
+        titleKhmer: 'ជឿជាក់លើសេចក្តីស្រឡាញ់ម្តងទៀត',
+        date: '',
+        detail: 'Thank God that I\'ve finally found a good man who genuinely cares about me and made me believe in love again, loves to make me happy and loves me so much more than I could imagine.',
+        detailKhmer: 'សូមអរគុណព្រះដែលខ្ញុំបានរកឃើញបុរសល្អម្នាក់ដែលពិតជាថែរក្សាខ្ញុំ និងធ្វើឱ្យខ្ញុំជឿជាក់លើសេចក្តីស្រឡាញ់ម្តងទៀត ស្រឡាញ់ធ្វើឱ្យខ្ញុំសប្បាយ និងស្រឡាញ់ខ្ញុំច្រើនជាងអ្វីដែលខ្ញុំអាចស្រមៃ។',
+        image: Assets.story2,
       ),
       (
-        title: 'Forever Begins',
-        date: '2026 · Phnom Penh',
-        detail: 'Celebrating this new chapter with family and dear friends.',
-        image: Assets.couple4,
+        title: 'To My Man',
+        titleKhmer: 'ចំពោះបុរសរបស់ខ្ញុំ',
+        date: '',
+        detail: 'To my man : When I look at you, I see the most handsome, hardworking, patience and loving person. I see the effort you put in every single day, and I see how hard you work for us and for our future. Love u ma hubbie🥰',
+        detailKhmer: 'ចំពោះបុរសរបស់ខ្ញុំ៖ នៅពេលខ្ញុំមើលអ្នក ខ្ញុំឃើញមនុស្សសង្ហាបំផុត ខិតខំបំផុត អត់ធ្មត់ និងស្រឡាញ់។ ខ្ញុំឃើញការខិតខំដែលអ្នកធ្វើរាល់ថ្ងៃ និងខ្ញុំឃើញពីរបៀបដែលអ្នកខិតខំសម្រាប់យើង និងសម្រាប់អនាគតរបស់យើង។ ស្រឡាញ់អ្នកណាស់ប្តី🥰',
+        image: Assets.story3,
+      ),
+      (
+        title: 'A Forever Begins',
+        titleKhmer: 'អនាគតអមតៈចាប់ផ្តើម',
+        date: '',
+        detail: 'This day is more than a wedding; it is the beginning of a forever built on trust, sacrifice, and unconditional love.',
+        detailKhmer: 'ថ្ងៃនេះគឺជាច្រើនជាងពិធីមង្គលការ។ វាគឺជាការចាប់ផ្តើមនៃអនាគតអមតៈដែលសាងសង់លើការទុកចិត្ត ការល пожертвовать និងសេចក្តីស្រឡាញ់ដែលគ្មានលក្ខខណ្ឌ។',
+        image: Assets.story4,
       ),
     ];
 
@@ -838,10 +1092,7 @@ class _LoveStoryHeader extends StatelessWidget {
         const SizedBox(width: 10),
         Text(
           'រឿងស្នេហា',
-          style: WeddingTextStyles.heading3.copyWith(
-            color: gold,
-            fontSize: 22,
-          ),
+          style: WeddingTextStyles.heading3.copyWith(color: gold, fontSize: 22),
         ),
       ],
     );
@@ -855,79 +1106,419 @@ class _LoveStoryTimeline extends StatelessWidget {
     required this.brown,
   });
 
-  final List<({String title, String date, String detail, String image})> moments;
+  final List<({String title, String titleKhmer, String date, String detail, String detailKhmer, String image})>
+  moments;
+  final Color gold;
+  final Color brown;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = ResponsiveBreakpoints.isMobile(context);
+    return Column(
+      children: moments
+          .asMap()
+          .entries
+          .map(
+            (entry) => Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: _StoryCard(
+                moment: entry.value,
+                index: entry.key,
+                gold: gold,
+                brown: brown,
+                isMobile: isMobile,
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _StoryCard extends StatelessWidget {
+  const _StoryCard({
+    required this.moment,
+    required this.index,
+    required this.gold,
+    required this.brown,
+    required this.isMobile,
+  });
+
+  final ({String title, String titleKhmer, String date, String detail, String detailKhmer, String image}) moment;
+  final int index;
+  final Color gold;
+  final Color brown;
+  final bool isMobile;
+
+  @override
+  Widget build(BuildContext context) {
+    final creamBackground = const Color(0xFFF8F2EB);
+    final lightYellow = gold.withValues(alpha: 0.15);
+    final isImageLeft = index % 2 == 0;
+
+    final imageWidget = _StoryImageFrame(
+      image: moment.image,
+      year: moment.date,
+      gold: gold,
+      lightYellow: lightYellow,
+    );
+
+    final textWidget = _StoryTextContent(
+      title: moment.title,
+      titleKhmer: moment.titleKhmer,
+      detail: moment.detail,
+      detailKhmer: moment.detailKhmer,
+      gold: gold,
+      brown: brown,
+    );
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: creamBackground,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Decorative gold corners
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                ),
+                border: Border(
+                  top: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                  left: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(16),
+                ),
+                border: Border(
+                  top: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                  right: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                ),
+                border: Border(
+                  bottom: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                  left: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: const BorderRadius.only(
+                  bottomRight: Radius.circular(16),
+                ),
+                border: Border(
+                  bottom: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                  right: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                ),
+              ),
+            ),
+          ),
+          // Main content
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: isMobile
+                ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      imageWidget,
+                      const SizedBox(height: 16),
+                      textWidget,
+                    ],
+                  )
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isImageLeft) ...[
+                        Expanded(flex: 2, child: imageWidget),
+                        const SizedBox(width: 24),
+                        Expanded(flex: 3, child: textWidget),
+                      ] else ...[
+                        Expanded(flex: 3, child: textWidget),
+                        const SizedBox(width: 24),
+                        Expanded(flex: 2, child: imageWidget),
+                      ],
+                    ],
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StoryImageFrame extends StatelessWidget {
+  const _StoryImageFrame({
+    required this.image,
+    required this.year,
+    required this.gold,
+    required this.lightYellow,
+  });
+
+  final String image;
+  final String year;
+  final Color gold;
+  final Color lightYellow;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+            color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: lightYellow, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: AspectRatio(
+              aspectRatio: 4 / 3,
+              child: Image.asset(
+                image,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+        // Decorative gold corners on image
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+              ),
+              border: Border(
+                top: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+                left: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(10),
+              ),
+              border: Border(
+                top: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+                right: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          child: Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(10),
+              ),
+              border: Border(
+                bottom: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+                left: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: const BorderRadius.only(
+                bottomRight: Radius.circular(10),
+              ),
+              border: Border(
+                bottom: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+                right: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+              ),
+            ),
+          ),
+        ),
+        // Year tag
+        if (year.isNotEmpty)
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                            color: gold,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                year,
+                          style: WeddingTextStyles.body.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _StoryTextContent extends StatelessWidget {
+  const _StoryTextContent({
+    required this.title,
+    required this.titleKhmer,
+    required this.detail,
+    required this.detailKhmer,
+    required this.gold,
+    required this.brown,
+  });
+
+  final String title;
+  final String titleKhmer;
+  final String detail;
+  final String detailKhmer;
   final Color gold;
   final Color brown;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: moments
-          .map(
-            (m) => Padding(
-              padding: const EdgeInsets.only(bottom: 14),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: gold.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(Iconsax.heart, color: gold, size: 20),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          m.title,
-                          style: WeddingTextStyles.heading3.copyWith(
-                            color: gold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          m.date,
-                          style: WeddingTextStyles.body.copyWith(
-                            color: brown.withValues(alpha: 0.8),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Khmer and English titles in same row
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Flexible(
+              child: Text(
+                titleKhmer,
+                style: WeddingTextStyles.heading3.copyWith(
+                  color: brown,
+                  fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 4),
+            ),
+            const SizedBox(width: 12),
                         Text(
-                          m.detail,
-                          style: WeddingTextStyles.body.copyWith(
-                            color: brown,
-                            height: 1.5,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 320),
-                          child: SizedBox(
-                            height: 150,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.asset(
-                                m.image,
-                                fit: BoxFit.cover,
-                              ),
+              '•',
+              style: WeddingTextStyles.heading3.copyWith(
+                color: gold.withValues(alpha: 0.5),
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Text(
+                title,
+                style: WeddingTextStyles.heading3.copyWith(
+                  color: gold,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-          )
-          .toList(),
+        const SizedBox(height: 12),
+        // Khmer detail/subtitle
+        Text(
+          detailKhmer,
+          style: WeddingTextStyles.body.copyWith(
+            color: brown,
+            height: 1.6,
+            fontSize: 15,
+          ),
+        ),
+        const SizedBox(height: 8),
+        // English detail/subtitle
+        Text(
+          detail,
+          style: WeddingTextStyles.body.copyWith(
+            color: brown.withValues(alpha: 0.8),
+            height: 1.6,
+            fontSize: 14,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -943,14 +1534,18 @@ class _ParentMessages extends StatelessWidget {
         title: 'លិខិតសូមអភ័យទោស',
         body:
             'យើងខ្ញុំជាមាតាបិតារបស់កូនប្រុស និងកូនស្រី សូមគោរពអញ្ជើញពីសំណាក់ ឯកឧត្តម លោកឧកញ៉ា លោកជំទាវ លោក លោកស្រី និងអ្នកនាងកញ្ញា ដែលជាភ្ញៀវកិត្តិយសទាំងអស់ ករណីដែលយើងខ្ញុំពុំបានជួបអញ្ជើញដោយផ្ទាល់។ យើងខ្ញុំសង្ឃឹមថា ភ្ញៀវកិត្តិយសទាំងអស់ នឹងផ្តល់កិត្តិយសអញ្ជើញចូលរួម ក្នុងពិធីមង្គលអាពាហ៍ពិពាហ៍ របស់កូនប្រុស និងកូនស្រីរបស់យើងខ្ញុំ ដោយក្តីអនុគ្រោះ។',
+        bodyEnglish:
+            'We, the parents of the bride and groom, sincerely apologize if we could not invite you in person and respectfully invite you to honor us with your presence at the wedding of our children.',
         titleColor: gold,
         bodyColor: brown,
       ),
       const SizedBox(width: 20, height: 20),
       _MessageCard(
-        title: 'សារជូនពរ',
+        title: 'លិខិតថ្លែងអំណរគុណ',
         body:
             'យើងខ្ញុំជាមាតាបិតារបស់កូនប្រុស និងកូនស្រី សូមថ្លែងអំណរគុណយ៉ាងជ្រាលជ្រៅ និងសូមគោរពជូនពរទាំង ៥ប្រការ ដល់ ឯកឧត្តម លោកឧកញ៉ា លោកជំទាវ លោក លោកស្រី និងភ្ញៀវកិត្តិយសទាំងអស់ ដែលបានចំណាយពេលវេលាដ៏មានតម្លៃ អញ្ជើញចូលរួមជាភ្ញៀវកិត្តិយស ក្នុងពិធីមង្គលអាពាហ៍ពិពាហ៍ របស់កូនប្រុស និងកូនស្រីរបស់យើងខ្ញុំ។ វត្តមានរបស់ ឯកឧត្តម លោក លោកស្រី និងភ្ញៀវកិត្តិយសទាំងអស់ គឺជាកិត្តិយសដ៏ខ្ពង់ខ្ពស់ និងជាមោទនភាពដ៏អស្ចារ្យបំផុត សម្រាប់គ្រួសាររបស់យើងខ្ញុំ។',
+        bodyEnglish:
+            'We, the parents of the bride and groom, express our deepest gratitude and heartfelt blessings to all distinguished guests for taking your valuable time to join the wedding of our son and daughter. Your presence is our greatest honor and pride.',
         titleColor: gold,
         bodyColor: brown,
       ),
@@ -960,21 +1555,25 @@ class _ParentMessages extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: children
-            .map((child) => Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: child,
-                ))
+            .map(
+              (child) => Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: child,
+              ),
+            )
             .toList(),
       );
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: children[0]),
-        const SizedBox(width: 20),
-        Expanded(child: children[2]),
-      ],
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: children[0]),
+          const SizedBox(width: 20),
+          Expanded(child: children[2]),
+        ],
+      ),
     );
   }
 }
@@ -983,12 +1582,14 @@ class _MessageCard extends StatelessWidget {
   const _MessageCard({
     required this.title,
     required this.body,
+    this.bodyEnglish,
     required this.titleColor,
     required this.bodyColor,
   });
 
   final String title;
   final String body;
+  final String? bodyEnglish;
   final Color titleColor;
   final Color bodyColor;
 
@@ -1025,45 +1626,16 @@ class _MessageCard extends StatelessWidget {
               height: 1.6,
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ThankYou extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final brown = const Color(0xFF6F4C0B);
-    final gold = const Color(0xFFB88527);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'សូមអរគុណ',
-            style: WeddingTextStyles.heading3.copyWith(
-              color: gold,
-              fontSize: 22,
+          if (bodyEnglish != null) ...[
+            const SizedBox(height: 10),
+            Text(
+              bodyEnglish!,
+              style: WeddingTextStyles.body.copyWith(
+                color: bodyColor.withValues(alpha: 0.85),
+                height: 1.5,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'We, as the parents of the bride and groom, would like to express our deepest gratitude and respectfully extend our thanks in all five directions to all distinguished guests who have taken their valuable time to join us as honored guests at the wedding of our son and daughter. The presence of Their Excellencies, Ladies and Gentlemen, and all distinguished guests is the greatest honor and pride of our family.',
-            style: WeddingTextStyles.body.copyWith(color: brown, height: 1.6),
-          ),
+          ],
         ],
       ),
     );
@@ -1128,15 +1700,14 @@ class _BottomNote extends StatelessWidget {
             width: 220,
             child: ElevatedButton.icon(
               onPressed: () async {
-                final uri = Uri.parse(
-                    'https://pay.ababank.com/oRF8/z80qz2zr');
-                final ok = await launchUrl(uri,
-                    mode: LaunchMode.externalApplication);
+                final uri = Uri.parse('https://pay.ababank.com/oRF8/z80qz2zr');
+                final ok = await launchUrl(
+                  uri,
+                  mode: LaunchMode.externalApplication,
+                );
                 if (!ok && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Could not open ABA PayWay.'),
-                    ),
+                    const SnackBar(content: Text('Could not open ABA PayWay.')),
                   );
                 }
               },
@@ -1148,14 +1719,46 @@ class _BottomNote extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: gold,
                 foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FooterNote extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final brown = const Color(0xFF6F4C0B);
+    final gold = const Color(0xFFB88527);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Made with ',
+            style: WeddingTextStyles.body.copyWith(
+              color: brown.withValues(alpha: 0.9),
+            ),
+          ),
+          Icon(Icons.favorite, color: gold, size: 18),
+          Text(
+            ' your special day',
+            style: WeddingTextStyles.body.copyWith(
+              color: brown.withValues(alpha: 0.9),
+            ),
+          ),
+          
         ],
       ),
     );
@@ -1206,10 +1809,7 @@ class _GiftQrCard extends StatelessWidget {
             aspectRatio: 1,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-              ),
+              child: Image.asset(imagePath, fit: BoxFit.cover),
             ),
           ),
         ],
@@ -1219,10 +1819,7 @@ class _GiftQrCard extends StatelessWidget {
 }
 
 class _GlassMusicButton extends StatelessWidget {
-  const _GlassMusicButton({
-    required this.playing,
-    required this.onPressed,
-  });
+  const _GlassMusicButton({required this.playing, required this.onPressed});
 
   final bool playing;
   final VoidCallback onPressed;

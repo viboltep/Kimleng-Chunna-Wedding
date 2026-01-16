@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
 
@@ -187,10 +188,14 @@ class _WelcomeCardState extends State<WelcomeCard> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Iconsax.direct_inbox,
-                            size: 20,
-                            color: Colors.white,
+                          SvgPicture.asset(
+                            'assets/icons/click-tap.svg',
+                            width: 20,
+                            height: 20,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
+                            ),
                           ),
                           const SizedBox(width: 10),
                           Text(
