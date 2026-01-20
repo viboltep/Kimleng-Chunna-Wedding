@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:shimmer/shimmer.dart';
 import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
 
@@ -272,19 +273,32 @@ class _WelcomeCardState extends State<WelcomeCard> {
                     ),
                     child: Column(
                       children: [
-                        
-                        //Guest Name
-                        Text(
-                          _loading ? 'កំពុងផ្ទុក...' : _guestName,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontFamily: 'Koulen',
-                            fontSize: 28,
-                            fontWeight: FontWeight.w600,
-                            color: accentColor,
-                            height: 1.3,
-                          ),
-                        ),
+                        //Guest Name with Shimmer
+                        _loading
+                            ? Shimmer.fromColors(
+                                baseColor: accentColor.withValues(alpha: 0.2),
+                                highlightColor: accentColor.withValues(alpha: 0.4),
+                                period: const Duration(milliseconds: 1200),
+                                child: Container(
+                                  width: 200,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: accentColor.withValues(alpha: 0.3),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                _guestName,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontFamily: 'Koulen',
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w600,
+                                  color: accentColor,
+                                  height: 1.3,
+                                ),
+                              ),
                       ],
                     ),
                   ),

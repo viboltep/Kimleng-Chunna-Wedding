@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shimmer/shimmer.dart';
 import '../constants/assets.dart';
 import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
@@ -26,6 +27,97 @@ const List<String> _galleryImages = [
   Assets.photo9,
   Assets.photo10,
 ];
+
+/// Shimmer widget for image loading placeholder
+class _ShimmerImage extends StatelessWidget {
+  const _ShimmerImage({
+    required this.width,
+    required this.height,
+    this.borderRadius,
+  });
+
+  final double width;
+  final double height;
+  final BorderRadius? borderRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      period: const Duration(milliseconds: 1200),
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: borderRadius ?? BorderRadius.zero,
+        ),
+      ),
+    );
+  }
+}
+
+/// Image widget with shimmer loading effect
+class _ShimmerImageAsset extends StatefulWidget {
+  const _ShimmerImageAsset({
+    required this.imagePath,
+    required this.width,
+    required this.height,
+    this.fit = BoxFit.cover,
+    this.borderRadius,
+  });
+
+  final String imagePath;
+  final double width;
+  final double height;
+  final BoxFit fit;
+  final BorderRadius? borderRadius;
+
+  @override
+  State<_ShimmerImageAsset> createState() => _ShimmerImageAssetState();
+}
+
+class _ShimmerImageAssetState extends State<_ShimmerImageAsset> {
+  bool _isLoading = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        if (_isLoading)
+          _ShimmerImage(
+            width: widget.width,
+            height: widget.height,
+            borderRadius: widget.borderRadius,
+          ),
+        Image.asset(
+          widget.imagePath,
+          width: widget.width,
+          height: widget.height,
+          fit: widget.fit,
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded || frame != null) {
+              if (_isLoading) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    setState(() => _isLoading = false);
+                  }
+                });
+              }
+              return child;
+            }
+            return _ShimmerImage(
+              width: widget.width,
+              height: widget.height,
+              borderRadius: widget.borderRadius,
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
 
 /// Desktop-first home screen aligned to the Figma “Home” frame (11:51).
 class HomeScreen extends StatefulWidget {
@@ -365,6 +457,7 @@ class _HeroInvite extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 'សិរីមង្គលអាពាហ៍ពិពាហ៍',
@@ -374,19 +467,20 @@ class _HeroInvite extends StatelessWidget {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 32),
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isNarrow = constraints.maxWidth < 700;
                   if (isNarrow) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CircleAvatar(
                                     backgroundImage: AssetImage(Assets.photo8),
                           radius: 80,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 20),
                         Text(
                           'សៀង គឹមឡេង',
                           textAlign: TextAlign.center,
@@ -395,7 +489,7 @@ class _HeroInvite extends StatelessWidget {
                             fontSize: 26,
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 12),
                         Text(
                           'និង',
                           textAlign: TextAlign.center,
@@ -404,7 +498,7 @@ class _HeroInvite extends StatelessWidget {
                             fontSize: 16,
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 12),
                         Text(
                           'លឹម ជូណា',
                           textAlign: TextAlign.center,
@@ -451,9 +545,10 @@ class _HeroInvite extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
@@ -463,7 +558,7 @@ class _HeroInvite extends StatelessWidget {
                       fontSize: 22,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   Text(
                     'ភោជនីយដ្ឋាន មហារមង្គល',
                     textAlign: TextAlign.center,
@@ -472,7 +567,7 @@ class _HeroInvite extends StatelessWidget {
                       fontSize: 18,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 32),
                   Text(
                     countdown,
                     textAlign: TextAlign.center,
@@ -482,7 +577,7 @@ class _HeroInvite extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 32),
                   _CalendarButton(),
                 ],
               ),
@@ -1058,17 +1153,17 @@ class _GalleryCollage extends StatelessWidget {
                 width: double.infinity,
                 height: 250,
                 child: ClipRect(
-                  child: Image.asset(
-                    _galleryImages[index],
-                    fit: BoxFit.cover,
+                  child: _ShimmerImageAsset(
+                    imagePath: _galleryImages[index],
                     width: double.infinity,
                     height: 250,
+                    fit: BoxFit.cover,
                   ),
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
       ),
     );
   }
@@ -1436,7 +1531,17 @@ class _StoryImageFrame extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             child: AspectRatio(
               aspectRatio: 3 / 4,
-              child: Image.asset(image, fit: BoxFit.cover),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return _ShimmerImageAsset(
+                    imagePath: image,
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight,
+                    fit: BoxFit.cover,
+                    borderRadius: BorderRadius.circular(10),
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -1877,7 +1982,17 @@ class _GiftQrCard extends StatelessWidget {
             aspectRatio: 1,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(imagePath, fit: BoxFit.cover),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return _ShimmerImageAsset(
+                    imagePath: imagePath,
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight,
+                    fit: BoxFit.cover,
+                    borderRadius: BorderRadius.circular(10),
+                  );
+                },
+              ),
             ),
           ),
         ],
