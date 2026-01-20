@@ -23,6 +23,8 @@ const List<String> _galleryImages = [
   Assets.photo6,
   Assets.photo7,
   Assets.photo8,
+  Assets.photo9,
+  Assets.photo10,
 ];
 
 /// Desktop-first home screen aligned to the Figma “Home” frame (11:51).
@@ -303,40 +305,24 @@ class _HeroInvite extends StatelessWidget {
         ],
       ),
         child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isNarrow = constraints.maxWidth < 700;
-          final flowerSize = isNarrow ? 100.0 : 400.0;
-          final horizontalPadding = isNarrow ? 60.0 : 100.0;
-          
-          return Stack(
-            children: [
-              // Bottom left flower - positioned at bottom of container
-              Positioned(
-                left: 0,
-                bottom: 0,
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Transform.translate(
-                    offset: Offset(isNarrow ? -flowerSize * 0.2 : -flowerSize * 0.2, 0),
-                    child: Image.asset(
-                      Assets.flower1,
-                      width: flowerSize,
-                      height: flowerSize,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-              ),
-              // Bottom right flower - positioned at bottom of container
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Transform.translate(
-                    offset: Offset(isNarrow ? flowerSize * 0.2 : flowerSize * 0.2, 0),
-                    child: Transform.flip(
-                      flipX: true,
+          builder: (context, constraints) {
+            final isNarrow = constraints.maxWidth < 700;
+            final flowerSize = isNarrow ? 100.0 : 400.0;
+            final horizontalPadding = isNarrow ? 60.0 : 100.0;
+
+            return Stack(
+              children: [
+                // Bottom left flower - positioned at bottom of container
+                Positioned(
+                  left: 0,
+                  bottom: 0,
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Transform.translate(
+                      offset: Offset(
+                        isNarrow ? -flowerSize * 0.2 : -flowerSize * 0.2,
+                        0,
+                      ),
                       child: Image.asset(
                         Assets.flower1,
                         width: flowerSize,
@@ -346,14 +332,36 @@ class _HeroInvite extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-              // Main content
-              Center(
-        child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 24,
-                    horizontal: horizontalPadding,
+                // Bottom right flower - positioned at bottom of container
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Transform.translate(
+                      offset: Offset(
+                        isNarrow ? flowerSize * 0.2 : flowerSize * 0.2,
+                        0,
+                      ),
+                      child: Transform.flip(
+                        flipX: true,
+                        child: Image.asset(
+                          Assets.flower1,
+                          width: flowerSize,
+                          height: flowerSize,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
                   ),
+                ),
+                // Main content
+                Center(
+        child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 24,
+                      horizontal: horizontalPadding,
+                    ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -375,7 +383,7 @@ class _HeroInvite extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CircleAvatar(
-                          backgroundImage: AssetImage(Assets.photo8),
+                                    backgroundImage: AssetImage(Assets.photo8),
                           radius: 80,
                         ),
                         const SizedBox(height: 12),
@@ -425,7 +433,7 @@ class _HeroInvite extends StatelessWidget {
                       ),
                       const SizedBox(width: 32),
                       CircleAvatar(
-                        backgroundImage: AssetImage(Assets.photo8),
+                                  backgroundImage: AssetImage(Assets.photo8),
                         radius: 100,
                       ),
                       const SizedBox(width: 32),
@@ -480,11 +488,11 @@ class _HeroInvite extends StatelessWidget {
               ),
             ],
           ),
-        ),
-              ),
-            ],
-          );
-        },
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -592,105 +600,21 @@ class _MapSection extends StatelessWidget {
       ),
     );
 
-    final dressCard = Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: _DressCodeCard(gold: gold, brown: brown),
-    );
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 900;
         if (isNarrow) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [mapCard, const SizedBox(height: 18), dressCard],
+            children: [mapCard],
           );
         }
 
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(flex: 3, child: mapCard),
-            const SizedBox(width: 20),
-            Expanded(flex: 2, child: dressCard),
-          ],
+          children: [Expanded(flex: 3, child: mapCard)],
         );
       },
-    );
-  }
-}
-
-class _DressCodeCard extends StatelessWidget {
-  const _DressCodeCard({required this.gold, required this.brown});
-
-  final Color gold;
-  final Color brown;
-
-  @override
-  Widget build(BuildContext context) {
-    final swatches = [
-      ('Gold / Champagne', '#D5A24A', const Color(0xFFD5A24A)),
-      ('Deep Maroon', '#5B2C2C', const Color(0xFF5B2C2C)),
-      ('Ivory / White', '#F7F3EB', const Color(0xFFF7F3EB)),
-    ];
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: gold.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: gold.withValues(alpha: 0.18)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Iconsax.brush, color: gold, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                'Dress Code',
-                style: WeddingTextStyles.heading3.copyWith(
-                  color: gold,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'ពាក់ពណ៌សម្លៀកបំពាក់បែបព្រះរាជវាំង៖ ស • ឬស្វាយចែងគគីរ • ស និងមរ្នូន',
-            style: WeddingTextStyles.body.copyWith(color: brown, height: 1.5),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: swatches
-                .map((s) => _ColorChip(label: s.$1, hex: s.$2, color: s.$3))
-                .toList(),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Gentlemen: suit or traditional silk in gold/neutral.\nLadies: elegant Khmer silk in gold, maroon, or ivory tones.',
-            style: WeddingTextStyles.body.copyWith(
-              color: brown.withValues(alpha: 0.9),
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -776,7 +700,7 @@ class _CalendarButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () => _launchCalendarInvite(context),
         style: ElevatedButton.styleFrom(
-          backgroundColor: gold,
+          backgroundColor: const Color(0xFFE19B1A),
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
           shape: RoundedRectangleBorder(
@@ -798,13 +722,13 @@ class _CalendarButton extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Text(
-          'ទាញចូលប្រតិទិន',
-          style: const TextStyle(
-            fontFamily: 'Dangrek',
-            fontSize: 16,
-            color: Colors.white,
-            fontWeight: FontWeight.w400,
-          ),
+              'ទាញចូលប្រតិទិន',
+              style: const TextStyle(
+                fontFamily: 'Dangrek',
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ],
         ),
@@ -816,13 +740,14 @@ class _CalendarButton extends StatelessWidget {
     // Wedding event on March 1, 2026, 5:00 PM - 9:30 PM
     const title = 'អាពាហ៍ពិពាហ៍ គឹមឡេង និង ជូណា • Wedding of Kimleng & Chunna';
     const location = 'ភោជនីយដ្ឋាន មហារមង្គល, Phnom Penh, Cambodia';
-    const description = 'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦\nវេលាម៉ោង ៥ រសៀល\nនៅភោជនីយដ្ឋាន មហារមង្គល\n\nYou are warmly invited to celebrate with Kimleng & Chunna.';
+    const description =
+        'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦\nវេលាម៉ោង ៥ រសៀល\nនៅភោជនីយដ្ឋាន មហារមង្គល\n\nYou are warmly invited to celebrate with Kimleng & Chunna.';
 
     // Event times: March 1, 2026, 5:00 PM - 9:30 PM (Cambodia time, UTC+7)
     // Convert to UTC for ICS format: 5 PM ICT = 10:00 AM UTC, 9:30 PM ICT = 2:30 PM UTC next day
     const startDateTime = '20260301T100000Z'; // 5:00 PM ICT = 10:00 AM UTC
-    const endDateTime = '20260301T143000Z';   // 9:30 PM ICT = 2:30 PM UTC
-    
+    const endDateTime = '20260301T143000Z'; // 9:30 PM ICT = 2:30 PM UTC
+
     // For Google Calendar (local time format)
     const googleStartDate = '20260301T170000';
     const googleEndDate = '20260301T213000';
@@ -839,7 +764,8 @@ class _CalendarButton extends StatelessWidget {
 
     // Generate DTSTAMP (current time in UTC)
     final now = DateTime.now().toUtc();
-    final dtstamp = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}T'
+    final dtstamp =
+        '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}T'
         '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}Z';
 
     final icsContent =
@@ -886,7 +812,7 @@ END:VCALENDAR''';
           final tempDir = Directory.systemTemp;
           final file = File('${tempDir.path}/wedding_event.ics');
           await file.writeAsString(icsContent);
-          
+
           // Use XFile from share_plus (it's re-exported)
           final xFile = XFile(file.path, mimeType: 'text/calendar');
           await Share.shareXFiles(
@@ -917,9 +843,7 @@ END:VCALENDAR''';
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Could not open calendar: ${e.toString()}'),
-        ),
+        SnackBar(content: Text('Could not open calendar: ${e.toString()}')),
       );
     }
   }
@@ -1084,33 +1008,68 @@ class _GalleryCollage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final isMobile = ResponsiveBreakpoints.isMobile(context);
+    final crossAxisCount = isMobile ? 2 : 4;
+    const gold = Color(0xFFB88527);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+          Row(
+            children: [
+              Icon(Iconsax.gallery, color: gold, size: 22),
+              const SizedBox(width: 10),
         Text(
           'វិចិត្រសាល',
           style: WeddingTextStyles.heading3.copyWith(
-            color: const Color(0xFFB88527),
+                  color: gold,
             fontSize: 22,
           ),
         ),
-        const SizedBox(height: 16),
-        ResponsiveGrid(
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 1,
-          children: List.generate(
-            _galleryImages.length,
-            (index) => GestureDetector(
+            ],
+          ),
+          const SizedBox(height: 18),
+          GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: 0,
+              mainAxisSpacing: 0,
+              mainAxisExtent: 250, // Fixed height for all images
+            ),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _galleryImages.length,
+            itemBuilder: (context, index) => GestureDetector(
               onTap: () => onImageTap(index),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(_galleryImages[index], fit: BoxFit.cover),
+              child: SizedBox(
+                width: double.infinity,
+                height: 250,
+                child: ClipRect(
+                  child: Image.asset(
+                    _galleryImages[index],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 250,
+                  ),
               ),
             ),
           ),
         ),
       ],
+      ),
     );
   }
 }
@@ -1125,35 +1084,38 @@ class _LoveStorySection extends StatelessWidget {
     final moments = [
       (
         title: 'Childhood Friends to Soulmates',
-        titleKhmer: 'មិត្តភក្តិកុមារដល់អ្នកជីវិត',
         date: '',
-        detail: 'From childhood friends to soulmates — some loves are miracles, not accidents.',
-        detailKhmer: 'ពីមិត្តភក្តិកុមារទៅជាអ្នកជីវិត — សេចក្តីស្រឡាញ់មួយចំនួនគឺជាអច្ឆរិយៈ មិនមែនជារឿងចៃដន្យទេ។',
+        detail:
+            'From childhood friends to soulmates — some loves are miracles, not accidents.',
         image: Assets.story1,
       ),
       (
         title: 'Believing in Love Again',
-        titleKhmer: 'ជឿជាក់លើសេចក្តីស្រឡាញ់ម្តងទៀត',
         date: '',
-        detail: 'Thank God that I\'ve finally found a good man who genuinely cares about me and made me believe in love again, loves to make me happy and loves me so much more than I could imagine.',
-        detailKhmer: 'សូមអរគុណព្រះដែលខ្ញុំបានរកឃើញបុរសល្អម្នាក់ដែលពិតជាថែរក្សាខ្ញុំ និងធ្វើឱ្យខ្ញុំជឿជាក់លើសេចក្តីស្រឡាញ់ម្តងទៀត ស្រឡាញ់ធ្វើឱ្យខ្ញុំសប្បាយ និងស្រឡាញ់ខ្ញុំច្រើនជាងអ្វីដែលខ្ញុំអាចស្រមៃ។',
+        detail:
+            'Thank God that I\'ve finally found a good man who genuinely cares about me and made me believe in love again, loves to make me happy and loves me so much more than I could imagine.',
         image: Assets.story2,
       ),
       (
         title: 'To My Man',
-        titleKhmer: 'ចំពោះបុរសរបស់ខ្ញុំ',
         date: '',
-        detail: 'To my man : When I look at you, I see the most handsome, hardworking, patience and loving person. I see the effort you put in every single day, and I see how hard you work for us and for our future. Love u ma hubbie🥰',
-        detailKhmer: 'ចំពោះបុរសរបស់ខ្ញុំ៖ នៅពេលខ្ញុំមើលអ្នក ខ្ញុំឃើញមនុស្សសង្ហាបំផុត ខិតខំបំផុត អត់ធ្មត់ និងស្រឡាញ់។ ខ្ញុំឃើញការខិតខំដែលអ្នកធ្វើរាល់ថ្ងៃ និងខ្ញុំឃើញពីរបៀបដែលអ្នកខិតខំសម្រាប់យើង និងសម្រាប់អនាគតរបស់យើង។ ស្រឡាញ់អ្នកណាស់ប្តី🥰',
+        detail:
+            'To my man : When I look at you, I see the most handsome, hardworking, patience and loving person. I see the effort you put in every single day, and I see how hard you work for us and for our future. Love u ma hubbie🥰',
         image: Assets.story3,
       ),
       (
         title: 'A Forever Begins',
-        titleKhmer: 'អនាគតអមតៈចាប់ផ្តើម',
         date: '',
-        detail: 'This day is more than a wedding; it is the beginning of a forever built on trust, sacrifice, and unconditional love.',
-        detailKhmer: 'ថ្ងៃនេះគឺជាច្រើនជាងពិធីមង្គលការ។ វាគឺជាការចាប់ផ្តើមនៃអនាគតអមតៈដែលសាងសង់លើការទុកចិត្ត ការល пожертвовать និងសេចក្តីស្រឡាញ់ដែលគ្មានលក្ខខណ្ឌ។',
+        detail:
+            'This day is more than a wedding; it is the beginning of a forever built on trust, sacrifice, and unconditional love.',
         image: Assets.story4,
+      ),
+      (
+        title: 'Our Wedding Day',
+        date: '',
+        detail:
+            'Surrounded by our families and friends, we promised to walk together through every joy and every challenge, holding the same love that brought us here today.',
+        image: Assets.photo1,
       ),
     ];
 
@@ -1210,15 +1172,22 @@ class _LoveStoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
       children: [
         Icon(Iconsax.heart_circle, color: gold, size: 24),
         const SizedBox(width: 10),
         Text(
-          'រឿងស្នេហា',
-          style: WeddingTextStyles.heading3.copyWith(color: gold, fontSize: 22),
-        ),
-      ],
+            'Our Love Story',
+            style: WeddingTextStyles.heading3.copyWith(
+              color: gold,
+              fontSize: 22,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1230,7 +1199,7 @@ class _LoveStoryTimeline extends StatelessWidget {
     required this.brown,
   });
 
-  final List<({String title, String titleKhmer, String date, String detail, String detailKhmer, String image})>
+  final List<({String title, String date, String detail, String image})>
   moments;
   final Color gold;
   final Color brown;
@@ -1268,7 +1237,7 @@ class _StoryCard extends StatelessWidget {
     required this.isMobile,
   });
 
-  final ({String title, String titleKhmer, String date, String detail, String detailKhmer, String image}) moment;
+  final ({String title, String date, String detail, String image}) moment;
   final int index;
   final Color gold;
   final Color brown;
@@ -1289,9 +1258,7 @@ class _StoryCard extends StatelessWidget {
 
     final textWidget = _StoryTextContent(
       title: moment.title,
-      titleKhmer: moment.titleKhmer,
       detail: moment.detail,
-      detailKhmer: moment.detailKhmer,
       gold: gold,
       brown: brown,
     );
@@ -1325,7 +1292,10 @@ class _StoryCard extends StatelessWidget {
                 ),
                 border: Border(
                   top: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
-                  left: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                  left: BorderSide(
+                    color: gold.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -1343,7 +1313,10 @@ class _StoryCard extends StatelessWidget {
                 ),
                 border: Border(
                   top: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
-                  right: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                  right: BorderSide(
+                    color: gold.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -1360,8 +1333,14 @@ class _StoryCard extends StatelessWidget {
                   bottomLeft: Radius.circular(16),
                 ),
                 border: Border(
-                  bottom: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
-                  left: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                  bottom: BorderSide(
+                    color: gold.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
+                  left: BorderSide(
+                    color: gold.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -1378,8 +1357,14 @@ class _StoryCard extends StatelessWidget {
                   bottomRight: Radius.circular(16),
                 ),
                 border: Border(
-                  bottom: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
-                  right: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
+                  bottom: BorderSide(
+                    color: gold.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
+                  right: BorderSide(
+                    color: gold.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -1451,10 +1436,7 @@ class _StoryImageFrame extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             child: AspectRatio(
               aspectRatio: 3 / 4,
-              child: Image.asset(
-                image,
-                fit: BoxFit.cover,
-              ),
+              child: Image.asset(image, fit: BoxFit.cover),
             ),
           ),
         ),
@@ -1507,7 +1489,10 @@ class _StoryImageFrame extends StatelessWidget {
                 bottomLeft: Radius.circular(10),
               ),
               border: Border(
-                bottom: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+                bottom: BorderSide(
+                  color: gold.withValues(alpha: 0.4),
+                  width: 2,
+                ),
                 left: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
               ),
             ),
@@ -1525,7 +1510,10 @@ class _StoryImageFrame extends StatelessWidget {
                 bottomRight: Radius.circular(10),
               ),
               border: Border(
-                bottom: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
+                bottom: BorderSide(
+                  color: gold.withValues(alpha: 0.4),
+                  width: 2,
+                ),
                 right: BorderSide(color: gold.withValues(alpha: 0.4), width: 2),
               ),
             ),
@@ -1539,7 +1527,7 @@ class _StoryImageFrame extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                            color: gold,
+                color: gold,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
@@ -1551,15 +1539,15 @@ class _StoryImageFrame extends StatelessWidget {
               ),
               child: Text(
                 year,
-                          style: WeddingTextStyles.body.copyWith(
+                style: WeddingTextStyles.body.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
                 ),
               ),
-            ),
-          ),
-      ],
+                    ),
+                  ),
+                ],
     );
   }
 }
@@ -1567,17 +1555,13 @@ class _StoryImageFrame extends StatelessWidget {
 class _StoryTextContent extends StatelessWidget {
   const _StoryTextContent({
     required this.title,
-    required this.titleKhmer,
     required this.detail,
-    required this.detailKhmer,
     required this.gold,
     required this.brown,
   });
 
   final String title;
-  final String titleKhmer;
   final String detail;
-  final String detailKhmer;
   final Color gold;
   final Color brown;
 
@@ -1586,54 +1570,15 @@ class _StoryTextContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Khmer and English titles in same row
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Flexible(
-              child: Text(
-                titleKhmer,
-                style: WeddingTextStyles.heading3.copyWith(
-                  color: brown,
-                  fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-            ),
-            const SizedBox(width: 12),
-                        Text(
-              '•',
-              style: WeddingTextStyles.heading3.copyWith(
-                color: gold.withValues(alpha: 0.5),
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Flexible(
-              child: Text(
-                title,
-                style: WeddingTextStyles.heading3.copyWith(
-                  color: gold,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-        const SizedBox(height: 12),
-        // Khmer detail/subtitle
         Text(
-          detailKhmer,
-          style: WeddingTextStyles.body.copyWith(
-            color: brown,
-            height: 1.6,
-            fontSize: 15,
+          title,
+          style: WeddingTextStyles.heading3.copyWith(
+            color: gold,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 8),
-        // English detail/subtitle
+        const SizedBox(height: 12),
         Text(
           detail,
           style: WeddingTextStyles.body.copyWith(
@@ -1882,7 +1827,6 @@ class _FooterNote extends StatelessWidget {
               color: brown.withValues(alpha: 0.9),
             ),
           ),
-          
         ],
       ),
     );

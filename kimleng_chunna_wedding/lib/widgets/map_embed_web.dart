@@ -1,7 +1,6 @@
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
 import 'dart:ui_web' as ui;
 import 'package:flutter/material.dart';
+import 'package:web/web.dart' as web;
 
 bool _mapViewRegistered = false;
 
@@ -11,7 +10,7 @@ Widget buildGoogleMapView(String embedUrl) {
     ui.platformViewRegistry.registerViewFactory(
       'google-map-embed',
       (viewId) {
-        final iframe = html.IFrameElement()
+        final iframe = web.HTMLIFrameElement()
           ..src = embedUrl
           ..style.border = '0'
           ..style.width = '100%'

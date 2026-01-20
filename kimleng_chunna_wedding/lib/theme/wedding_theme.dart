@@ -15,7 +15,7 @@ class WeddingColors {
 
 class WeddingTextStyles {
   static TextStyle get heading1 => const TextStyle(
-        fontFamily: 'Moulpali',
+        fontFamily: 'Battambang',
         fontSize: 48,
         fontWeight: FontWeight.bold,
         color: WeddingColors.textPrimary,
@@ -39,21 +39,21 @@ class WeddingTextStyles {
       );
 
   static TextStyle get body => const TextStyle(
-        fontFamily: 'Moulpali',
+        fontFamily: 'Battambang',
         fontSize: 16,
         color: WeddingColors.textSecondary,
         height: 1.6,
       );
 
   static TextStyle get bodyLarge => const TextStyle(
-        fontFamily: 'Moulpali',
+        fontFamily: 'Battambang',
         fontSize: 18,
         color: WeddingColors.textSecondary,
         height: 1.6,
       );
 
   static TextStyle get caption => const TextStyle(
-        fontFamily: 'Moulpali',
+        fontFamily: 'Battambang',
         fontSize: 14,
         color: WeddingColors.textSecondary,
         fontStyle: FontStyle.italic,
@@ -68,13 +68,13 @@ class WeddingTextStyles {
       );
 
   static TextStyle get small => const TextStyle(
-        fontFamily: 'Moulpali',
+        fontFamily: 'Battambang',
         fontSize: 12,
         color: WeddingColors.textSecondary,
         height: 1.4,
       );
   static TextStyle get smallKhmer => const TextStyle(
-        fontFamily: 'Moulpali',
+        fontFamily: 'Battambang',
         fontSize: 12,
         color: WeddingColors.textSecondary,
         height: 1.4,
@@ -91,7 +91,7 @@ class WeddingTextStyles {
     TextDecoration? decoration,
   }) {
     return TextStyle(
-      fontFamily: 'Moulpali',
+      fontFamily: 'Battambang',
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color ?? WeddingColors.textPrimary,

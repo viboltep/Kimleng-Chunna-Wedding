@@ -20,13 +20,16 @@ jobs:
         cache: true
         
     - name: Install dependencies
+      working-directory: kimleng_chunna_wedding
       run: flutter pub get
       
     - name: Run tests (optional - continue on failure)
+      working-directory: kimleng_chunna_wedding
       run: flutter test || true
       continue-on-error: true
       
     - name: Build web app
+      working-directory: kimleng_chunna_wedding
       run: flutter build web --release --no-tree-shake-icons
       
     - name: Deploy to VPS
@@ -47,7 +50,7 @@ jobs:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "build/web/"
+        source: "kimleng_chunna_wedding/build/web/"
         target: "/var/www/kimleng-wedding/web/"
         
     - name: Reload Nginx
