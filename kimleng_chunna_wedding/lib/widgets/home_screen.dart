@@ -15,6 +15,7 @@ import 'map_embed_stub.dart'
     if (dart.library.html) 'map_embed_web.dart'
     as map_embed;
 
+
 const List<String> _galleryImages = [
   Assets.photo1,
   Assets.photo2,
@@ -1307,34 +1308,117 @@ class _LoveStoryTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = ResponsiveBreakpoints.isMobile(context);
-    return Column(
-      children: moments
-          .asMap()
-          .entries
-          .map(
-            (entry) => Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: _StoryCard(
-                moment: entry.value,
-                index: entry.key,
-                gold: gold,
-                brown: brown,
-                isMobile: isMobile,
+    
+    if (isMobile) {
+      // Mobile: Simple vertical timeline with connecting line
+      return Stack(
+        children: [
+          // Vertical timeline line
+          Positioned(
+            left: 7, // Half of dot width (16/2) - 1
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 2,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    gold.withValues(alpha: 0.3),
+                    gold,
+                    gold.withValues(alpha: 0.3),
+                  ],
+                  stops: const [0.0, 0.5, 1.0],
+                ),
               ),
             ),
-          )
-          .toList(),
+          ),
+          // Timeline items
+          Column(
+            children: moments
+                .asMap()
+                .entries
+                .map(
+                  (entry) => Padding(
+                    padding: const EdgeInsets.only(bottom: 32),
+                    child: _TimelineItem(
+                      moment: entry.value,
+                      index: entry.key,
+                      gold: gold,
+                      brown: brown,
+                      isMobile: true,
+                      isLeft: true, // Always left on mobile
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ],
+      );
+    }
+    
+    // Desktop: Center timeline with alternating sides
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Stack(
+          children: [
+            // Vertical timeline line
+            Positioned(
+              left: constraints.maxWidth / 2 - 1,
+              top: 0,
+              bottom: 0,
+              child: Container(
+                width: 2,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      gold.withValues(alpha: 0.3),
+                      gold,
+                      gold.withValues(alpha: 0.3),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                ),
+              ),
+            ),
+            // Timeline items
+            Column(
+              children: moments
+                  .asMap()
+                  .entries
+                  .map(
+                    (entry) => Padding(
+                      padding: const EdgeInsets.only(bottom: 48),
+                      child: _TimelineItem(
+                        moment: entry.value,
+                        index: entry.key,
+                        gold: gold,
+                        brown: brown,
+                        isMobile: false,
+                        isLeft: entry.key % 2 == 0,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
-class _StoryCard extends StatelessWidget {
-  const _StoryCard({
+class _TimelineItem extends StatelessWidget {
+  const _TimelineItem({
     required this.moment,
     required this.index,
     required this.gold,
     required this.brown,
     required this.isMobile,
+    required this.isLeft,
   });
 
   final ({String title, String date, String detail, String image}) moment;
@@ -1342,13 +1426,13 @@ class _StoryCard extends StatelessWidget {
   final Color gold;
   final Color brown;
   final bool isMobile;
+  final bool isLeft;
 
   @override
   Widget build(BuildContext context) {
     final creamBackground = const Color(0xFFF8F2EB);
     final lightYellow = gold.withValues(alpha: 0.15);
-    final isImageLeft = index % 2 == 0;
-
+    
     final imageWidget = _StoryImageFrame(
       image: moment.image,
       year: moment.date,
@@ -1363,141 +1447,157 @@ class _StoryCard extends StatelessWidget {
       brown: brown,
     );
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: creamBackground,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
+    if (isMobile) {
+      // Mobile: Simple vertical layout with timeline dot
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Decorative gold corners
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
+          // Timeline dot
+          Container(
+            margin: const EdgeInsets.only(top: 12, right: 16),
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              color: gold,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: gold.withValues(alpha: 0.4),
+                  blurRadius: 8,
+                  spreadRadius: 2,
                 ),
-                border: Border(
-                  top: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
-                  left: BorderSide(
-                    color: gold.withValues(alpha: 0.3),
-                    width: 2,
-                  ),
-                ),
-              ),
+              ],
             ),
           ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(16),
-                ),
-                border: Border(
-                  top: BorderSide(color: gold.withValues(alpha: 0.3), width: 2),
-                  right: BorderSide(
-                    color: gold.withValues(alpha: 0.3),
-                    width: 2,
-                  ),
-                ),
-              ),
+          // Content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                imageWidget,
+                const SizedBox(height: 16),
+                textWidget,
+              ],
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            child: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                ),
-                border: Border(
-                  bottom: BorderSide(
-                    color: gold.withValues(alpha: 0.3),
-                    width: 2,
-                  ),
-                  left: BorderSide(
-                    color: gold.withValues(alpha: 0.3),
-                    width: 2,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: const BorderRadius.only(
-                  bottomRight: Radius.circular(16),
-                ),
-                border: Border(
-                  bottom: BorderSide(
-                    color: gold.withValues(alpha: 0.3),
-                    width: 2,
-                  ),
-                  right: BorderSide(
-                    color: gold.withValues(alpha: 0.3),
-                    width: 2,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Main content
-          Padding(
-            padding: const EdgeInsets.all(4),
-            child: isMobile
-                ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      imageWidget,
-                      const SizedBox(height: 16),
-                      textWidget,
-                    ],
-                  )
-                : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (isImageLeft) ...[
-                        Expanded(flex: 2, child: imageWidget),
-                        const SizedBox(width: 24),
-                        Expanded(flex: 3, child: textWidget),
-                      ] else ...[
-                        Expanded(flex: 3, child: textWidget),
-                        const SizedBox(width: 24),
-                        Expanded(flex: 2, child: imageWidget),
-                      ],
-                    ],
-                  ),
           ),
         ],
-      ),
+      );
+    }
+
+    // Desktop: Alternating left/right layout with center timeline
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left side content
+        if (isLeft) ...[
+          Expanded(
+            flex: 5,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: creamBackground,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          textWidget,
+                          const SizedBox(height: 16),
+                          imageWidget,
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Timeline dot
+          Container(
+            width: 20,
+            height: 20,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: gold,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 4),
+              boxShadow: [
+                BoxShadow(
+                  color: gold.withValues(alpha: 0.5),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+          ),
+          // Right side spacer
+          const Expanded(flex: 5, child: SizedBox()),
+        ] else ...[
+          // Right side spacer
+          const Expanded(flex: 5, child: SizedBox()),
+          // Timeline dot
+          Container(
+            width: 20,
+            height: 20,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: gold,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 4),
+              boxShadow: [
+                BoxShadow(
+                  color: gold.withValues(alpha: 0.5),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+          ),
+          // Right side content
+          Expanded(
+            flex: 5,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: creamBackground,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    textWidget,
+                    const SizedBox(height: 16),
+                    imageWidget,
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -1517,6 +1617,9 @@ class _StoryImageFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = ResponsiveBreakpoints.isMobile(context);
+    final imageWidth = isMobile ? 150.0 : 180.0; // Smaller size, responsive
+    
     return Stack(
                 children: [
                   Container(
@@ -1534,18 +1637,21 @@ class _StoryImageFrame extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: AspectRatio(
-              aspectRatio: 3 / 4,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return _ShimmerImageAsset(
-                    imagePath: image,
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
-                    fit: BoxFit.cover,
-                    borderRadius: BorderRadius.circular(10),
-                  );
-                },
+            child: SizedBox(
+              width: imageWidth, // Smaller responsive width
+              child: AspectRatio(
+                aspectRatio: 3 / 4, // Maintains aspect ratio
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return _ShimmerImageAsset(
+                      imagePath: image,
+                      width: constraints.maxWidth,
+                      height: constraints.maxHeight,
+                      fit: BoxFit.cover,
+                      borderRadius: BorderRadius.circular(10),
+                    );
+                  },
+                ),
               ),
             ),
           ),

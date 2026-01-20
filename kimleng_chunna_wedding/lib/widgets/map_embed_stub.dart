@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import '../theme/wedding_theme.dart';
 
 Widget buildGoogleMapView(String embedUrl) {
+  // Stub implementation for non-web platforms
   return Container(
-    color: Colors.black.withValues(alpha: 0.05),
-    child: Center(
-      child: Text(
-        'Google Maps preview is available on web.\nUse "Get Directions" below to open Maps.',
-        textAlign: TextAlign.center,
-        style: WeddingTextStyles.body,
-      ),
+    color: Colors.grey[200],
+    child: const Center(
+      child: Text('Map view not available on this platform'),
     ),
   );
 }
