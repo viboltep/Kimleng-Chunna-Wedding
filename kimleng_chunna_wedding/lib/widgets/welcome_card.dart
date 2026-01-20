@@ -246,8 +246,8 @@ class _WelcomeCardState extends State<WelcomeCard> {
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontFamily: 'Koulen',
-                      fontSize: 36,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w500,
                       color: accentColor,
                       height: 1.3,
                     ),
@@ -258,10 +258,10 @@ class _WelcomeCardState extends State<WelcomeCard> {
                     textAlign: TextAlign.center,
                     style: WeddingTextStyles.bodyLarge.copyWith(
                       color: secondaryText,
-                      fontSize: 18,
+                      fontSize: 14,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 28,
@@ -292,8 +292,8 @@ class _WelcomeCardState extends State<WelcomeCard> {
                                 _guestName,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
-                                  fontFamily: 'Koulen',
-                                  fontSize: 28,
+                                  fontFamily: 'Battambang',
+                                  fontSize: 24,
                                   fontWeight: FontWeight.w600,
                                   color: accentColor,
                                   height: 1.3,

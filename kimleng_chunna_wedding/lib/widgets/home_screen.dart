@@ -276,9 +276,14 @@ class _HomeScreenState extends State<HomeScreen> {
     _startCountdown();
     // Ensure music starts when arriving on Home after user interaction.
     WebMusicService().resumeBackgroundMusic().then((_) {
+      final isNowPlaying = WebMusicService().isPlaying;
       setState(() {
-        _playing = WebMusicService().isPlaying;
+        _playing = isNowPlaying;
       });
+      // Set up listeners as fallback only if music didn't start
+      if (!isNowPlaying) {
+        WebMusicService().setupUserInteractionListeners();
+      }
     });
   }
 

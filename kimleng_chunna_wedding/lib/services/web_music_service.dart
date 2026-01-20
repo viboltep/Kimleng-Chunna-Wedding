@@ -90,7 +90,8 @@ class WebMusicService {
 
       // Do not attempt autoplay; rely on explicit user interaction
       _isPlaying = false;
-      _setupUserInteractionListeners();
+      // Don't set up automatic listeners - music should only start when explicitly requested
+      // (e.g., when user clicks button to proceed from welcome screen)
 
       _isInitialized = true;
       debugPrint('Web music service initialization completed');
@@ -192,6 +193,11 @@ class WebMusicService {
 
   /// Get current volume
   double get volume => _audioElement?.volume.toDouble() ?? 0.0;
+
+  /// Set up user interaction listeners to start music (public method for home screen)
+  void setupUserInteractionListeners() {
+    _setupUserInteractionListeners();
+  }
 
   /// Set up user interaction listeners to start music
   void _setupUserInteractionListeners() {
