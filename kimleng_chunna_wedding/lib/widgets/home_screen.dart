@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/assets.dart';
 import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
@@ -286,7 +287,9 @@ class _HeroInvite extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewHeight = MediaQuery.of(context).size.height;
-    return Container(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
       constraints: BoxConstraints(minHeight: viewHeight * 0.95),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -299,9 +302,58 @@ class _HeroInvite extends StatelessWidget {
           ),
         ],
       ),
-      child: Center(
+        child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isNarrow = constraints.maxWidth < 700;
+          final flowerSize = isNarrow ? 100.0 : 400.0;
+          final horizontalPadding = isNarrow ? 60.0 : 100.0;
+          
+          return Stack(
+            children: [
+              // Bottom left flower - positioned at bottom of container
+              Positioned(
+                left: 0,
+                bottom: 0,
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Transform.translate(
+                    offset: Offset(isNarrow ? -flowerSize * 0.2 : -flowerSize * 0.2, 0),
+                    child: Image.asset(
+                      Assets.flower1,
+                      width: flowerSize,
+                      height: flowerSize,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+              // Bottom right flower - positioned at bottom of container
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Transform.translate(
+                    offset: Offset(isNarrow ? flowerSize * 0.2 : flowerSize * 0.2, 0),
+                    child: Transform.flip(
+                      flipX: true,
+                      child: Image.asset(
+                        Assets.flower1,
+                        width: flowerSize,
+                        height: flowerSize,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // Main content
+              Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 24,
+                    horizontal: horizontalPadding,
+                  ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -429,6 +481,11 @@ class _HeroInvite extends StatelessWidget {
             ],
           ),
         ),
+              ),
+            ],
+          );
+        },
+        ),
       ),
     );
   }
@@ -510,7 +567,8 @@ class _MapSection extends StatelessWidget {
               icon: const Icon(Iconsax.routing, size: 18),
               label: Text(
                 'Get Directions',
-                style: GoogleFonts.dangrek(
+                style: const TextStyle(
+                  fontFamily: 'Dangrek',
                   fontSize: 16,
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
@@ -712,40 +770,62 @@ class _ColorChip extends StatelessWidget {
 class _CalendarButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    const gold = Color(0xFFB88527);
     return SizedBox(
       width: 240,
-      child: ElevatedButton.icon(
+      child: ElevatedButton(
         onPressed: () => _launchCalendarInvite(context),
-        icon: const Icon(Iconsax.calendar_tick, size: 18),
-        label: Text(
-          'ទាញចូលប្រតិទិន',
-          style: GoogleFonts.dangrek(
-            fontSize: 16,
-            color: Colors.white,
-            fontWeight: FontWeight.w100,
-          ),
-        ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFB88527),
+          backgroundColor: gold,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
           ),
-          textStyle: WeddingTextStyles.button.copyWith(fontSize: 16),
+          elevation: 0,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(
+              'assets/icons/calendar-add.svg',
+              width: 20,
+              height: 20,
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+          'ទាញចូលប្រតិទិន',
+          style: const TextStyle(
+            fontFamily: 'Dangrek',
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.w400,
+          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Future<void> _launchCalendarInvite(BuildContext context) async {
-    // All-day event on March 1, 2026 (local wedding day).
-    const startDate = '20260301';
-    const endDateExclusive = '20260302'; // all-day uses next day end
-    const title = 'Wedding of Kimleng & Chunna';
-    const location = 'ភោជនីយដ្ឋាន មហារមង្គល, Phnom Penh';
-    const description =
-        'You are warmly invited to celebrate with Kimleng & Chunna.';
+    // Wedding event on March 1, 2026, 5:00 PM - 9:30 PM
+    const title = 'អាពាហ៍ពិពាហ៍ គឹមឡេង និង ជូណា • Wedding of Kimleng & Chunna';
+    const location = 'ភោជនីយដ្ឋាន មហារមង្គល, Phnom Penh, Cambodia';
+    const description = 'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦\nវេលាម៉ោង ៥ រសៀល\nនៅភោជនីយដ្ឋាន មហារមង្គល\n\nYou are warmly invited to celebrate with Kimleng & Chunna.';
+
+    // Event times: March 1, 2026, 5:00 PM - 9:30 PM (Cambodia time, UTC+7)
+    // Convert to UTC for ICS format: 5 PM ICT = 10:00 AM UTC, 9:30 PM ICT = 2:30 PM UTC next day
+    const startDateTime = '20260301T100000Z'; // 5:00 PM ICT = 10:00 AM UTC
+    const endDateTime = '20260301T143000Z';   // 9:30 PM ICT = 2:30 PM UTC
+    
+    // For Google Calendar (local time format)
+    const googleStartDate = '20260301T170000';
+    const googleEndDate = '20260301T213000';
 
     final googleCalendarUri = Uri.parse(
       'https://calendar.google.com/calendar/render'
@@ -753,48 +833,92 @@ class _CalendarButton extends StatelessWidget {
       '&text=${Uri.encodeComponent(title)}'
       '&details=${Uri.encodeComponent(description)}'
       '&location=${Uri.encodeComponent(location)}'
-      '&dates=$startDate/$endDateExclusive',
+      '&dates=$googleStartDate/$googleEndDate'
+      '&ctz=Asia/Phnom_Penh',
     );
 
+    // Generate DTSTAMP (current time in UTC)
+    final now = DateTime.now().toUtc();
+    final dtstamp = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}T'
+        '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}Z';
+
     final icsContent =
-        '''
-BEGIN:VCALENDAR
+        '''BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//KimlengChunnaWedding//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
 BEGIN:VEVENT
-UID:kimlengchunna-20260301
-DTSTAMP:20260116T000000Z
-DTSTART;VALUE=DATE:$startDate
-DTEND;VALUE=DATE:$endDateExclusive
+UID:kimlengchunna-20260301@kimlengchunna.wedding
+DTSTAMP:$dtstamp
+DTSTART:$startDateTime
+DTEND:$endDateTime
 SUMMARY:$title
 DESCRIPTION:$description
 LOCATION:$location
+STATUS:CONFIRMED
+SEQUENCE:0
+BEGIN:VALARM
+TRIGGER:-PT2H
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Wedding in 2 hours
+END:VALARM
 END:VEVENT
-END:VCALENDAR
-''';
+END:VCALENDAR''';
 
     final icsUri = Uri.parse(
       'data:text/calendar;charset=utf-8,${Uri.encodeComponent(icsContent)}',
     );
 
     try {
-      final target = kIsWeb
-          ? googleCalendarUri
-          : Platform.isIOS
-          ? icsUri
-          : googleCalendarUri;
+      if (kIsWeb) {
+        // Web: Use Google Calendar
       final success = await launchUrl(
-        target,
+          googleCalendarUri,
         mode: LaunchMode.externalApplication,
       );
       if (!success) {
         throw Exception('Unable to open calendar');
       }
-    } catch (_) {
+      } else if (Platform.isIOS) {
+        // iOS: Create temporary ICS file and share it to open in native Calendar
+        try {
+          final tempDir = Directory.systemTemp;
+          final file = File('${tempDir.path}/wedding_event.ics');
+          await file.writeAsString(icsContent);
+          
+          // Use XFile from share_plus (it's re-exported)
+          final xFile = XFile(file.path, mimeType: 'text/calendar');
+          await Share.shareXFiles(
+            [xFile],
+            text: 'Add to Calendar',
+            subject: title,
+          );
+        } catch (e) {
+          // Fallback: Try data URI if file sharing fails
+          final success = await launchUrl(
+            icsUri,
+            mode: LaunchMode.externalApplication,
+          );
+          if (!success) {
+            throw Exception('Unable to open calendar: $e');
+          }
+        }
+      } else {
+        // Android: Use Google Calendar
+        final success = await launchUrl(
+          googleCalendarUri,
+          mode: LaunchMode.externalApplication,
+        );
+        if (!success) {
+          throw Exception('Unable to open calendar');
+        }
+      }
+    } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not open calendar. Please try again.'),
+        SnackBar(
+          content: Text('Could not open calendar: ${e.toString()}'),
         ),
       );
     }
@@ -1326,7 +1450,7 @@ class _StoryImageFrame extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: AspectRatio(
-              aspectRatio: 4 / 3,
+              aspectRatio: 3 / 4,
               child: Image.asset(
                 image,
                 fit: BoxFit.cover,
@@ -1842,10 +1966,16 @@ class _GlassMusicButton extends StatelessWidget {
           child: SizedBox(
             width: 52,
             height: 52,
-            child: Icon(
-              playing ? Icons.pause : Icons.play_arrow,
-              color: Colors.white,
-              size: 20,
+            child: Center(
+              child: SvgPicture.asset(
+                playing ? 'assets/icons/pause.svg' : 'assets/icons/play.svg',
+                width: 20,
+                height: 20,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
+              ),
             ),
           ),
         ),

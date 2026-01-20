@@ -6,7 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:kimleng_chunna_wedding/main.dart';
+import 'package:kimlengchouna/main.dart';
 
 void main() {
   group('Wedding Invitation Widget Tests', () {

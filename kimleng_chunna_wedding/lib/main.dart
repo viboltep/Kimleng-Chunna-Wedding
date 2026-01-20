@@ -19,7 +19,7 @@ class WeddingApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Kimleng & Chunna Wedding',
+      title: 'Kimleng & Chunna',
       theme: WeddingTheme.lightTheme,
       home: const EntryFlow(),
       debugShowCheckedModeBanner: false,

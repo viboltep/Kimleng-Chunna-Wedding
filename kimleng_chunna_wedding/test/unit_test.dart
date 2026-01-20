@@ -7,13 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 
-import 'package:kimleng_chunna_wedding/theme/wedding_theme.dart';
+import 'package:kimlengchouna/theme/wedding_theme.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  // Disable Google Fonts network loading during tests; use built-in fallbacks.
-  WeddingTextStyles.enableGoogleFonts = false;
 
   group('Wedding Theme Tests', () {
     test('WeddingColors should have defined colors', () {

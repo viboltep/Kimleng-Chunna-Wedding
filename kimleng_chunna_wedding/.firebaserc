@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "kimlengchunna"
-  }
+  },
+  "targets": {
+    "kimlengchunna": {
+      "hosting": {
+        "main": [
+          "kimlengchouna"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

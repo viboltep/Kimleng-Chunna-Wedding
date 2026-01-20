@@ -88,9 +88,9 @@ class WebMusicService {
         _isPlaying = false;
       });
 
-      // Do not attempt autoplay; music will only start when explicitly called
+      // Do not attempt autoplay; rely on explicit user interaction
       _isPlaying = false;
-      // Removed global interaction listeners - music will only start on button click
+      _setupUserInteractionListeners();
 
       _isInitialized = true;
       debugPrint('Web music service initialization completed');
@@ -192,6 +192,40 @@ class WebMusicService {
 
   /// Get current volume
   double get volume => _audioElement?.volume.toDouble() ?? 0.0;
+
+  /// Set up user interaction listeners to start music
+  void _setupUserInteractionListeners() {
+    if (_listenersAttached) {
+      return;
+    }
+
+    debugPrint('🔧 Setting up user interaction listeners...');
+    _listenersAttached = true;
+
+    Future<void> handleInteraction(String type) async {
+      if (!_isPlaying && _audioElement != null) {
+        debugPrint('👆 $type interaction detected, starting music...');
+        try {
+          await resumeBackgroundMusic();
+        } catch (e) {
+          debugPrint('❌ Error during $type interaction resume: $e');
+        }
+      }
+    }
+
+    _clickSubscription = html.document.onClick.listen((_) {
+      handleInteraction('Click');
+    });
+    _touchStartSubscription = html.document.onTouchStart.listen((_) {
+      handleInteraction('Touch');
+    });
+    _scrollSubscription = html.document.onScroll.listen((_) {
+      handleInteraction('Scroll');
+    });
+    _keyDownSubscription = html.document.onKeyDown.listen((_) {
+      handleInteraction('Key');
+    });
+  }
 
   /// Try alternative audio paths if the first one fails
   void _tryAlternativePaths(String primaryPath, String legacyPath) {

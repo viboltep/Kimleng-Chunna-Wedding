@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class WeddingColors {
   static const Color primary = Color(0xFF8B4513); // Saddle Brown
@@ -15,120 +14,73 @@ class WeddingColors {
 }
 
 class WeddingTextStyles {
-  /// Allows tests to disable Google Fonts to avoid network/font bundle access.
-  static bool enableGoogleFonts = true;
-  static TextStyle get heading1 => _safeTextStyle(
-        () => GoogleFonts.playfairDisplay(
-          fontSize: 48,
-          fontWeight: FontWeight.bold,
-          color: WeddingColors.textPrimary,
-          height: 1.2,
-        ),
-        fallback: const TextStyle(
-          fontSize: 48,
-          fontWeight: FontWeight.bold,
-          color: WeddingColors.textPrimary,
-          height: 1.2,
-        ),
+  static TextStyle get heading1 => const TextStyle(
+        fontFamily: 'Moulpali',
+        fontSize: 48,
+        fontWeight: FontWeight.bold,
+        color: WeddingColors.textPrimary,
+        height: 1.2,
       );
 
-  static TextStyle get heading2 => _safeTextStyle(
-        () => GoogleFonts.koulen(
-          fontSize: 64,
-          fontWeight: FontWeight.w600,
-          color: WeddingColors.textPrimary,
-          height: 1.3,
-        ),
-        fallback: const TextStyle(
-          fontSize: 64,
-          fontWeight: FontWeight.w600,
-          color: WeddingColors.textPrimary,
-          height: 1.3,
-        ),
+  static TextStyle get heading2 => const TextStyle(
+        fontFamily: 'Koulen',
+        fontSize: 64,
+        fontWeight: FontWeight.w600,
+        color: WeddingColors.textPrimary,
+        height: 1.3,
       );
 
-  static TextStyle get heading3 => _safeTextStyle(
-        () => GoogleFonts.koulen(
-          fontSize: 32,
-          fontWeight: FontWeight.w500,
-          color: WeddingColors.textPrimary,
-          height: 1.4,
-        ),
-        fallback: const TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.w500,
-          color: WeddingColors.textPrimary,
-          height: 1.4,
-        ),
+  static TextStyle get heading3 => const TextStyle(
+        fontFamily: 'Koulen',
+        fontSize: 32,
+        fontWeight: FontWeight.w500,
+        color: WeddingColors.textPrimary,
+        height: 1.4,
       );
 
-  static TextStyle get body => _safeTextStyle(
-        () => GoogleFonts.crimsonText(
-          fontSize: 16,
-          color: WeddingColors.textSecondary,
-          height: 1.6,
-        ),
-        fallback: const TextStyle(
-          fontSize: 16,
-          color: WeddingColors.textSecondary,
-          height: 1.6,
-        ),
+  static TextStyle get body => const TextStyle(
+        fontFamily: 'Moulpali',
+        fontSize: 16,
+        color: WeddingColors.textSecondary,
+        height: 1.6,
       );
 
-  static TextStyle get bodyLarge => _safeTextStyle(
-        () => GoogleFonts.crimsonText(
-          fontSize: 18,
-          color: WeddingColors.textSecondary,
-          height: 1.6,
-        ),
-        fallback: const TextStyle(
-          fontSize: 18,
-          color: WeddingColors.textSecondary,
-          height: 1.6,
-        ),
+  static TextStyle get bodyLarge => const TextStyle(
+        fontFamily: 'Moulpali',
+        fontSize: 18,
+        color: WeddingColors.textSecondary,
+        height: 1.6,
       );
 
-  static TextStyle get caption => _safeTextStyle(
-        () => GoogleFonts.crimsonText(
-          fontSize: 14,
-          color: WeddingColors.textSecondary,
-          fontStyle: FontStyle.italic,
-          height: 1.5,
-        ),
-        fallback: const TextStyle(
-          fontSize: 14,
-          color: WeddingColors.textSecondary,
-          fontStyle: FontStyle.italic,
-          height: 1.5,
-        ),
+  static TextStyle get caption => const TextStyle(
+        fontFamily: 'Moulpali',
+        fontSize: 14,
+        color: WeddingColors.textSecondary,
+        fontStyle: FontStyle.italic,
+        height: 1.5,
       );
 
-  static TextStyle get button => _safeTextStyle(
-        () => GoogleFonts.crimsonText(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: WeddingColors.white,
-        ),
-        fallback: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: WeddingColors.white,
-        ),
+  static TextStyle get button => const TextStyle(
+        fontFamily: 'Dangrek',
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: WeddingColors.white,
       );
 
-  static TextStyle get small => _safeTextStyle(
-        () => GoogleFonts.crimsonText(
-          fontSize: 12,
-          color: WeddingColors.textSecondary,
-          height: 1.4,
-        ),
-        fallback: const TextStyle(
-          fontSize: 12,
-          color: WeddingColors.textSecondary,
-          height: 1.4,
-        ),
+  static TextStyle get small => const TextStyle(
+        fontFamily: 'Moulpali',
+        fontSize: 12,
+        color: WeddingColors.textSecondary,
+        height: 1.4,
+      );
+  static TextStyle get smallKhmer => const TextStyle(
+        fontFamily: 'Moulpali',
+        fontSize: 12,
+        color: WeddingColors.textSecondary,
+        height: 1.4,
       );
 
+  // Kept for backward compatibility - now uses Moulpali font
   static TextStyle bayon({
     double fontSize = 16,
     FontWeight fontWeight = FontWeight.w400,
@@ -138,38 +90,16 @@ class WeddingTextStyles {
     double? letterSpacing,
     TextDecoration? decoration,
   }) {
-    return _safeTextStyle(
-      () => GoogleFonts.bayon(
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        color: color ?? WeddingColors.textPrimary,
-        height: height,
-        fontStyle: fontStyle,
-        letterSpacing: letterSpacing,
-        decoration: decoration,
-      ),
-      fallback: TextStyle(
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        color: color ?? WeddingColors.textPrimary,
-        height: height,
-        fontStyle: fontStyle,
-        letterSpacing: letterSpacing,
-        decoration: decoration,
-      ),
+    return TextStyle(
+      fontFamily: 'Moulpali',
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color ?? WeddingColors.textPrimary,
+      height: height,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      decoration: decoration,
     );
-  }
-
-  static TextStyle _safeTextStyle(
-    TextStyle Function() build, {
-    required TextStyle fallback,
-  }) {
-    if (!enableGoogleFonts) return fallback;
-    try {
-      return build();
-    } catch (_) {
-      return fallback;
-    }
   }
 }
 

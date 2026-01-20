@@ -1,8 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-import 'package:iconsax/iconsax.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
@@ -18,41 +14,6 @@ class WelcomeCard extends StatefulWidget {
 }
 
 class _WelcomeCardState extends State<WelcomeCard> {
-  String _guestName = 'Guest';
-  bool _loading = true;
-  static const String _lookupUrl =
-      'https://script.google.com/macros/s/AKfycbyZR2Wg5pz69wkRJ-S2v3zxEy8oDgepDeDvwebN6m-FqJjawM48Gi782Ibblk6k1pHThg/exec';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadGuestName();
-  }
-
-  Future<void> _loadGuestName() async {
-    final eid = Uri.base.queryParameters['eid']?.trim();
-    if (eid == null || eid.isEmpty) {
-      setState(() => _loading = false);
-      return;
-    }
-
-    try {
-      final uri = Uri.parse('$_lookupUrl?eid=$eid');
-      final resp = await http.get(uri);
-      if (resp.statusCode == 200) {
-        final data = json.decode(resp.body) as Map<String, dynamic>;
-        final name = (data['name'] ?? 'Guest').toString().trim();
-        setState(() {
-          _guestName = name.isEmpty ? 'Guest' : name;
-          _loading = false;
-        });
-      } else {
-        setState(() => _loading = false);
-      }
-    } catch (e) {
-      setState(() => _loading = false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,9 +53,12 @@ class _WelcomeCardState extends State<WelcomeCard> {
                   Text(
                     'សិរីមង្គលអាពាហ៍ពិពាហ៍',
                     textAlign: TextAlign.center,
-                    style: WeddingTextStyles.heading2.copyWith(
-                      color: accentColor,
+                    style: const TextStyle(
+                      fontFamily: 'Koulen',
                       fontSize: 36,
+                      fontWeight: FontWeight.w600,
+                      color: accentColor,
+                      height: 1.3,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -104,18 +68,6 @@ class _WelcomeCardState extends State<WelcomeCard> {
                     style: WeddingTextStyles.bodyLarge.copyWith(
                       color: secondaryText,
                       fontSize: 18,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _loading
-                        ? 'Loading invitation…'
-                        : 'Invitation for: $_guestName',
-                    textAlign: TextAlign.center,
-                    style: WeddingTextStyles.body.copyWith(
-                      color: accentColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   Container(
@@ -133,9 +85,12 @@ class _WelcomeCardState extends State<WelcomeCard> {
                         Text(
                           'លោក ទេព វិបុល',
                           textAlign: TextAlign.center,
-                          style: WeddingTextStyles.heading2.copyWith(
-                            color: accentColor,
+                          style: const TextStyle(
+                            fontFamily: 'Koulen',
                             fontSize: 28,
+                            fontWeight: FontWeight.w600,
+                            color: accentColor,
+                            height: 1.3,
                           ),
                         ),
                       ],
@@ -145,18 +100,23 @@ class _WelcomeCardState extends State<WelcomeCard> {
                   Text(
                     'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
                     textAlign: TextAlign.center,
-                    style: WeddingTextStyles.heading3.copyWith(
-                      color: accentColor,
+                    style: const TextStyle(
+                      fontFamily: 'Koulen',
                       fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      color: accentColor,
+                      height: 1.4,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     'ភោជនីយដ្ឋាន មហារមង្គល',
                     textAlign: TextAlign.center,
-                    style: WeddingTextStyles.bodyLarge.copyWith(
-                      color: secondaryText,
+                    style: const TextStyle(
+                      fontFamily: 'Moulpali',
                       fontSize: 18,
+                      color: secondaryText,
+                      height: 1.6,
                     ),
                   ),
                   const SizedBox(height: 36),
@@ -200,7 +160,8 @@ class _WelcomeCardState extends State<WelcomeCard> {
                           const SizedBox(width: 10),
                           Text(
                             'សូមចុចបើកការអញ្ចើញ',
-                            style: GoogleFonts.dangrek(
+                            style: const TextStyle(
+                              fontFamily: 'Dangrek',
                               fontSize: 16,
                               color: Colors.white,
                               fontWeight: FontWeight.w400,
