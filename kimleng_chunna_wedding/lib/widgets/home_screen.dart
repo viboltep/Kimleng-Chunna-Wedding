@@ -1484,68 +1484,66 @@ class _LoveStoryTimeline extends StatelessWidget {
     final isMobile = ResponsiveBreakpoints.isMobile(context);
 
     if (isMobile) {
-      // Mobile: timeline aligns dots to each card height
+      // Mobile: timeline with minimal spacing
       return Column(
         children: moments.asMap().entries.map((entry) {
           final isLast = entry.key == moments.length - 1;
           return Padding(
-            padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Column(
-                    children: [
-                      Container(
-                        width: 16,
-                        height: 16,
-                        margin: const EdgeInsets.only(top: 6),
-                        decoration: BoxDecoration(
-                          color: gold,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: gold.withValues(alpha: 0.4),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
+            padding: EdgeInsets.only(bottom: isLast ? 0 : 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 16,
+                      height: 16,
+                      margin: const EdgeInsets.only(top: 6),
+                      decoration: BoxDecoration(
+                        color: gold,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: gold.withValues(alpha: 0.4),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                          ),
+                        ],
                       ),
-                      if (!isLast)
-                        Expanded(
-                          child: Container(
-                            width: 2,
-                            margin: const EdgeInsets.symmetric(vertical: 6),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  gold.withValues(alpha: 0.6),
-                                  gold.withValues(alpha: 0.8),
-                                ],
-                              ),
-                            ),
+                    ),
+                    if (!isLast)
+                      Container(
+                        width: 2,
+                        height: 12,
+                        margin: const EdgeInsets.only(top: 4),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              gold.withValues(alpha: 0.6),
+                              gold.withValues(alpha: 0.8),
+                            ],
                           ),
                         ),
-                    ],
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _TimelineItem(
+                    moment: entry.value,
+                    index: entry.key,
+                    gold: gold,
+                    brown: brown,
+                    isMobile: true,
+                    isLeft: true, // Always left on mobile
+                    images: _images,
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _TimelineItem(
-                      moment: entry.value,
-                      index: entry.key,
-                      gold: gold,
-                      brown: brown,
-                      isMobile: true,
-                      isLeft: true, // Always left on mobile
-                      images: _images,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         }).toList(),

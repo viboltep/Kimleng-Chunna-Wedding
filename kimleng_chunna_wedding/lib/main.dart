@@ -27,8 +27,7 @@ class WeddingApp extends StatelessWidget {
   }
 }
 
-/// Simple flow controller that shows the Figma-style welcome card first,
-/// then transitions to the main invitation/home page after user taps continue.
+
 class EntryFlow extends StatefulWidget {
   const EntryFlow({super.key});
 
