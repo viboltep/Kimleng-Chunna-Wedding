@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:iconsax/iconsax.dart';
 import '../theme/wedding_theme.dart';
+import '../utils/responsive.dart';
 
-class WeddingAgendaSection extends StatefulWidget {
+class WeddingAgendaSection extends StatelessWidget {
   const WeddingAgendaSection({super.key});
 
-  @override
-  State<WeddingAgendaSection> createState() => _WeddingAgendaSectionState();
-}
-
-class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
-  String _selectedDate = 'ថ្ងៃទី១'; // Default selected date
-
-  final Map<String, List<Map<String, String>>> _agenda = {
+  final Map<String, List<Map<String, String>>> _agenda = const {
     'ថ្ងៃទី១': [
       {'time': 'ម៉ោង ១:០០ រសៀល', 'event': 'ពិធីក្រុងពាលី'},
       {'time': 'ម៉ោង ២:០០ រសៀល', 'event': 'ពិធីកាត់សក់បង្កក់សិរី'},
@@ -32,161 +27,200 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = ResponsiveBreakpoints.isMobile(context);
+    const gold = Color(0xFFB88527);
+    const brown = Color(0xFF6F4C0B);
+
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            WeddingColors.primary.withValues(alpha: 0.05),
-            WeddingColors.secondary.withValues(alpha: 0.05),
-          ],
-        ),
+        color: WeddingColors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: WeddingColors.primary.withValues(alpha: 0.1),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: WeddingColors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                    BoxShadow(
-                      color: WeddingColors.primary.withValues(alpha: 0.1),
-                      blurRadius: 30,
-                      offset: const Offset(0, 15),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'កម្មវិធីសិរីមង្គលអាពាហ៍ពិពាហ៍', // Wedding Ceremony Program
-                          style: WeddingTextStyles.bayon(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFb88527),
-                            height: 1.3,
-                          ),
-                          textAlign: TextAlign.center,
-                        )
-                            .animate()
-                            .fadeIn(duration: 600.ms, delay: 200.ms)
-                            .slideY(begin: 0.2),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-
-                    //Date Selection Tabs
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildDateTab('ថ្ងៃទី១'),
-                        _buildDateTab('ថ្ងៃទី២'),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    // Agenda Timeline
-                    Column(
-                      children: _agenda[_selectedDate]!
-                          .map(
-                            (event) => _buildAgendaItem(
-                              event['time']!,
-                              event['event']!,
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ],
+          Row(
+            children: [
+              Icon(Iconsax.calendar, color: gold, size: 22),
+              const SizedBox(width: 10),
+              Text(
+                'តារាងកម្មវិធី',
+                style: WeddingTextStyles.heading3.copyWith(
+                  color: gold,
+                  fontSize: 22,
                 ),
               )
-              .animate()
-              .fadeIn(duration: 600.ms, delay: 400.ms)
-              .slideY(begin: 0.2),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDateTab(String date) {
-    final isSelected = _selectedDate == date;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedDate = date;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFFb88527).withValues(alpha: 0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          border: isSelected
-              ? Border.all(color: const Color(0xFFb88527), width: 2)
-              : null,
-        ),
-        child: Text(
-          date,
-          style: WeddingTextStyles.bayon(
-            fontSize: 18,
-            color: isSelected
-                ? const Color(0xFFb88527)
-                : WeddingColors.textSecondary,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            height: 1.6,
+                  .animate()
+                  .fadeIn(duration: 600.ms, delay: 200.ms)
+                  .slideY(begin: 0.2),
+            ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAgendaItem(String time, String event) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.calendar_today, color: const Color(0xFFb88527), size: 24),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
+          const SizedBox(height: 24),
+          if (isMobile)
+            Column(
+              children: [
+                _TimelineDay(
+                  title: 'ថ្ងៃទី១',
+                  events: _agenda['ថ្ងៃទី១']!,
+                  gold: gold,
+                  brown: brown,
+                ),
+                const SizedBox(height: 32),
+                _TimelineDay(
+                  title: 'ថ្ងៃទី២',
+                  events: _agenda['ថ្ងៃទី២']!,
+                  gold: gold,
+                  brown: brown,
+                ),
+              ],
+            )
+          else
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  time,
-                  style: WeddingTextStyles.bayon(
-                    fontSize: 16,
-                    color: WeddingColors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                    height: 1.6,
+                Expanded(
+                  child: _TimelineDay(
+                    title: 'ថ្ងៃទី១',
+                    events: _agenda['ថ្ងៃទី១']!,
+                    gold: gold,
+                    brown: brown,
                   ),
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  event,
-                  style: WeddingTextStyles.bayon(
-                    fontSize: 14,
-                    color: WeddingColors.textSecondary,
-                    fontStyle: FontStyle.italic,
-                    height: 1.5,
+                const SizedBox(width: 24),
+                Expanded(
+                  child: _TimelineDay(
+                    title: 'ថ្ងៃទី២',
+                    events: _agenda['ថ្ងៃទី២']!,
+                    gold: gold,
+                    brown: brown,
                   ),
                 ),
               ],
             ),
-          ),
         ],
       ),
+    )
+        .animate()
+        .fadeIn(duration: 600.ms, delay: 400.ms)
+        .slideY(begin: 0.2);
+  }
+}
+
+class _TimelineDay extends StatelessWidget {
+  const _TimelineDay({
+    required this.title,
+    required this.events,
+    required this.gold,
+    required this.brown,
+  });
+
+  final String title;
+  final List<Map<String, String>> events;
+  final Color gold;
+  final Color brown;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: WeddingTextStyles.bayon(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: gold,
+          ),
+        ),
+        const SizedBox(height: 20),
+        ...events.asMap().entries.map((entry) {
+          final isLast = entry.key == events.length - 1;
+          return Padding(
+            padding: EdgeInsets.only(bottom: isLast ? 0 : 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 14,
+                      height: 14,
+                      margin: const EdgeInsets.only(top: 4),
+                      decoration: BoxDecoration(
+                        color: gold,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: gold.withValues(alpha: 0.4),
+                            blurRadius: 6,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!isLast)
+                      Container(
+                        width: 2,
+                        height: 12,
+                        margin: const EdgeInsets.only(top: 4),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              gold.withValues(alpha: 0.6),
+                              gold.withValues(alpha: 0.8),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.value['time']!,
+                        style: WeddingTextStyles.bayon(
+                          fontSize: 14,
+                          color: brown,
+                          fontWeight: FontWeight.w600,
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        entry.value['event']!,
+                        style: WeddingTextStyles.bayon(
+                          fontSize: 13,
+                          color: brown.withValues(alpha: 0.8),
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ],
     );
   }
 }

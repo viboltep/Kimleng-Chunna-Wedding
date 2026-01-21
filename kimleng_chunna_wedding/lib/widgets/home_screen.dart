@@ -11,6 +11,7 @@ import '../constants/assets.dart';
 import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
 import '../utils/responsive.dart';
+import 'wedding_agenda_section.dart';
 import 'map_embed_stub.dart'
     if (dart.library.html) 'map_embed_web.dart'
     as map_embed;
@@ -424,7 +425,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     celebrationText: _countdown,
                   ),
                   const SizedBox(height: 48),
-                  _ScheduleCard(),
+                  const WeddingAgendaSection(),
                   const SizedBox(height: 48),
                   _MapBlessingRow(),
                   const SizedBox(height: 48),
