@@ -15,7 +15,6 @@ import 'map_embed_stub.dart'
     if (dart.library.html) 'map_embed_web.dart'
     as map_embed;
 
-
 const List<String> _galleryImages = [
   Assets.photo1,
   Assets.photo2,
@@ -54,6 +53,67 @@ class _ShimmerImage extends StatelessWidget {
           color: Colors.grey[300],
           borderRadius: borderRadius ?? BorderRadius.zero,
         ),
+      ),
+    );
+  }
+}
+
+class _ShimmerAvatar extends StatefulWidget {
+  const _ShimmerAvatar({
+    required this.asset,
+    required this.radius,
+  });
+
+  final String asset;
+  final double radius;
+
+  @override
+  State<_ShimmerAvatar> createState() => _ShimmerAvatarState();
+}
+
+class _ShimmerAvatarState extends State<_ShimmerAvatar> {
+  bool _loaded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = widget.radius * 2;
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          AnimatedOpacity(
+            opacity: _loaded ? 0 : 1,
+            duration: const Duration(milliseconds: 200),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          ClipOval(
+            child: Image.asset(
+              widget.asset,
+              fit: BoxFit.cover,
+              width: size,
+              height: size,
+              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                if (frame != null && !_loaded) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) setState(() => _loaded = true);
+                  });
+                }
+                return child;
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -277,14 +337,9 @@ class _HomeScreenState extends State<HomeScreen> {
     _startCountdown();
     // Ensure music starts when arriving on Home after user interaction.
     WebMusicService().resumeBackgroundMusic().then((_) {
-      final isNowPlaying = WebMusicService().isPlaying;
       setState(() {
-        _playing = isNowPlaying;
+        _playing = WebMusicService().isPlaying;
       });
-      // Set up listeners as fallback only if music didn't start
-      if (!isNowPlaying) {
-        WebMusicService().setupUserInteractionListeners();
-      }
     });
   }
 
@@ -357,13 +412,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 48),
                   _ScheduleCard(),
                   const SizedBox(height: 48),
-                  _MapSection(),
+                  _MapBlessingRow(),
                   const SizedBox(height: 48),
                   _GalleryCollage(
                     onImageTap: (index) => _openGalleryViewer(context, index),
                   ),
                   const SizedBox(height: 48),
                   _LoveStorySection(),
+
                   const SizedBox(height: 48),
                   _ParentMessages(),
                   const SizedBox(height: 48),
@@ -390,18 +446,18 @@ class _HeroInvite extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: Container(
-      constraints: BoxConstraints(minHeight: viewHeight * 0.95),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
+        constraints: BoxConstraints(minHeight: viewHeight * 0.95),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 12),
+            ),
+          ],
+        ),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isNarrow = constraints.maxWidth < 700;
@@ -455,140 +511,134 @@ class _HeroInvite extends StatelessWidget {
                 ),
                 // Main content
                 Center(
-        child: Padding(
+                  child: Padding(
                     padding: EdgeInsets.symmetric(
                       vertical: 24,
                       horizontal: horizontalPadding,
                     ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'សិរីមង្គលអាពាហ៍ពិពាហ៍',
-                textAlign: TextAlign.center,
-                style: WeddingTextStyles.heading2.copyWith(
-                  color: const Color(0xFFB88527),
-                  fontSize: 32,
-                ),
-              ),
-              const SizedBox(height: 32),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final isNarrow = constraints.maxWidth < 700;
-                  if (isNarrow) {
-                    return Column(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                                    backgroundImage: AssetImage(Assets.photo8),
-                          radius: 80,
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final isNarrow = constraints.maxWidth < 700;
+                            if (isNarrow) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  _ShimmerAvatar(
+                                    asset: Assets.photo8,
+                                    radius: 80,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    'សៀង គឹមឡេង',
+                                    textAlign: TextAlign.center,
+                                    style: WeddingTextStyles.heading2.copyWith(
+                                      color: const Color(0xFFB88527),
+                                      fontSize: 26,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'និង',
+                                    textAlign: TextAlign.center,
+                                    style: WeddingTextStyles.body.copyWith(
+                                      color: const Color(0xFF6F4C0B),
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'លឹម ជូណា',
+                                    textAlign: TextAlign.center,
+                                    style: WeddingTextStyles.heading2.copyWith(
+                                      color: const Color(0xFFB88527),
+                                      fontSize: 26,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    'សៀង គឹមឡេង',
+                                    textAlign: TextAlign.center,
+                                    style: WeddingTextStyles.heading2.copyWith(
+                                      color: const Color(0xFFB88527),
+                                      fontSize: 30,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 32),
+                                _ShimmerAvatar(
+                                  asset: Assets.photo8,
+                                  radius: 100,
+                                ),
+                                const SizedBox(width: 32),
+                                Flexible(
+                                  child: Text(
+                                    'លឹម ជូណា',
+                                    textAlign: TextAlign.center,
+                                    style: WeddingTextStyles.heading2.copyWith(
+                                      color: const Color(0xFFB88527),
+                                      fontSize: 30,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'សៀង គឹមឡេង',
-                          textAlign: TextAlign.center,
-                          style: WeddingTextStyles.heading2.copyWith(
-                            color: const Color(0xFFB88527),
-                            fontSize: 26,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'និង',
-                          textAlign: TextAlign.center,
-                          style: WeddingTextStyles.body.copyWith(
-                            color: const Color(0xFF6F4C0B),
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'លឹម ជូណា',
-                          textAlign: TextAlign.center,
-                          style: WeddingTextStyles.heading2.copyWith(
-                            color: const Color(0xFFB88527),
-                            fontSize: 26,
-                          ),
+                        const SizedBox(height: 40),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontFamily: 'Dangrek',
+                                fontSize: 22,
+                                color: Color(0xFFB88527),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+                            Text(
+                              'ភោជនីយដ្ឋាន មហារមង្គល',
+                              textAlign: TextAlign.center,
+                              style: WeddingTextStyles.heading3.copyWith(
+                                color: const Color(0xFF6F4C0B),
+                                fontSize: 24,
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            Text(
+                              countdown,
+                              textAlign: TextAlign.center,
+                              style: WeddingTextStyles.heading3.copyWith(
+                                color: const Color(0xFF6F4C0B),
+                                fontSize: 26,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            _CalendarButton(),
+                          ],
                         ),
                       ],
-                    );
-                  }
-
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          'សៀង គឹមឡេង',
-                          textAlign: TextAlign.center,
-                          style: WeddingTextStyles.heading2.copyWith(
-                            color: const Color(0xFFB88527),
-                            fontSize: 30,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 32),
-                      CircleAvatar(
-                                  backgroundImage: AssetImage(Assets.photo8),
-                        radius: 100,
-                      ),
-                      const SizedBox(width: 32),
-                      Flexible(
-                        child: Text(
-                          'លឹម ជូណា',
-                          textAlign: TextAlign.center,
-                          style: WeddingTextStyles.heading2.copyWith(
-                            color: const Color(0xFFB88527),
-                            fontSize: 30,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 40),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
-                    textAlign: TextAlign.center,
-                    style: WeddingTextStyles.heading3.copyWith(
-                      color: const Color(0xFFB88527),
-                      fontSize: 22,
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'ភោជនីយដ្ឋាន មហារមង្គល',
-                    textAlign: TextAlign.center,
-                    style: WeddingTextStyles.bodyLarge.copyWith(
-                      color: const Color(0xFF6F4C0B),
-                      fontSize: 18,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    countdown,
-                    textAlign: TextAlign.center,
-                    style: WeddingTextStyles.heading3.copyWith(
-                      color: const Color(0xFF6F4C0B),
-                      fontSize: 26,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  _CalendarButton(),
-                ],
-              ),
-            ],
-          ),
                   ),
                 ),
               ],
@@ -644,7 +694,7 @@ class _MapSection extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'ភោជនីយដ្ឋាន មហារមង្គល\nPhnom Penh, Cambodia',
+            'ភោជនីយដ្ឋាន មហារមង្គល',
             style: WeddingTextStyles.body.copyWith(color: brown, height: 1.5),
           ),
           const SizedBox(height: 18),
@@ -703,7 +753,8 @@ class _MapSection extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isNarrow = constraints.maxWidth < 900;
+        final maxWidth = constraints.maxWidth;
+        final isNarrow = maxWidth < 900;
         if (isNarrow) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -713,7 +764,55 @@ class _MapSection extends StatelessWidget {
 
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Expanded(flex: 3, child: mapCard)],
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [SizedBox(width: maxWidth * 0.5, child: mapCard)],
+        );
+      },
+    );
+  }
+}
+
+class _MapBlessingRow extends StatelessWidget {
+  const _MapBlessingRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = constraints.maxWidth;
+        final isStacked = maxWidth < 900;
+
+        if (isStacked) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: const [
+              _MapSection(),
+              SizedBox(height: 24),
+              _BlessingMessageSection(),
+            ],
+          );
+        }
+
+        const minHeight = 360.0;
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 1,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: minHeight),
+                child: _MapSection(),
+              ),
+            ),
+            SizedBox(width: 24),
+            Expanded(
+              flex: 1,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: minHeight),
+                child: _BlessingMessageSection(),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -840,9 +939,9 @@ class _CalendarButton extends StatelessWidget {
   Future<void> _launchCalendarInvite(BuildContext context) async {
     // Wedding event on March 1, 2026, 5:00 PM - 9:30 PM
     const title = 'អាពាហ៍ពិពាហ៍ គឹមឡេង និង ជូណា • Wedding of Kimleng & Chunna';
-    const location = 'ភោជនីយដ្ឋាន មហារមង្គល, Phnom Penh, Cambodia';
+    const location = 'ភោជនីយដ្ឋាន មហារមង្គល';
     const description =
-        'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦\nវេលាម៉ោង ៥ រសៀល\nនៅភោជនីយដ្ឋាន មហារមង្គល\n\nYou are warmly invited to celebrate with Kimleng & Chunna.';
+        'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦\nវេលាម៉ោង ៥ រសៀល\nនៅភោជនីយដ្ឋាន មហារមង្គល';
 
     // Event times: March 1, 2026, 5:00 PM - 9:30 PM (Cambodia time, UTC+7)
     // Convert to UTC for ICS format: 5 PM ICT = 10:00 AM UTC, 9:30 PM ICT = 2:30 PM UTC next day
@@ -900,13 +999,13 @@ END:VCALENDAR''';
     try {
       if (kIsWeb) {
         // Web: Use Google Calendar
-      final success = await launchUrl(
+        final success = await launchUrl(
           googleCalendarUri,
-        mode: LaunchMode.externalApplication,
-      );
-      if (!success) {
-        throw Exception('Unable to open calendar');
-      }
+          mode: LaunchMode.externalApplication,
+        );
+        if (!success) {
+          throw Exception('Unable to open calendar');
+        }
       } else if (Platform.isIOS) {
         // iOS: Create temporary ICS file and share it to open in native Calendar
         try {
@@ -1128,18 +1227,18 @@ class _GalleryCollage extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+        children: [
           Row(
             children: [
               Icon(Iconsax.gallery, color: gold, size: 22),
               const SizedBox(width: 10),
-        Text(
-          'វិចិត្រសាល',
-          style: WeddingTextStyles.heading3.copyWith(
+              Text(
+                'វិចិត្រសាល',
+                style: WeddingTextStyles.heading3.copyWith(
                   color: gold,
-            fontSize: 22,
-          ),
-        ),
+                  fontSize: 22,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 18),
@@ -1277,10 +1376,10 @@ class _LoveStoryHeader extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Row(
         mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Iconsax.heart_circle, color: gold, size: 24),
-        const SizedBox(width: 10),
-        Text(
+        children: [
+          Icon(Iconsax.heart_circle, color: gold, size: 24),
+          const SizedBox(width: 10),
+          Text(
             'Our Love Story',
             style: WeddingTextStyles.heading3.copyWith(
               color: gold,
@@ -1308,56 +1407,100 @@ class _LoveStoryTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = ResponsiveBreakpoints.isMobile(context);
-    
+
     if (isMobile) {
       // Mobile: Simple vertical timeline with connecting line
-      return Stack(
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Vertical timeline line
-          Positioned(
-            left: 7, // Half of dot width (16/2) - 1
-            top: 0,
-            bottom: 0,
-            child: Container(
-              width: 2,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    gold.withValues(alpha: 0.3),
-                    gold,
-                    gold.withValues(alpha: 0.3),
+          // Timeline line and dots column
+          Column(
+            children: [
+              // First dot
+              Container(
+                width: 16,
+                height: 16,
+                margin: const EdgeInsets.only(top: 12),
+                decoration: BoxDecoration(
+                  color: gold,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 3),
+                  boxShadow: [
+                    BoxShadow(
+                      color: gold.withValues(alpha: 0.4),
+                      blurRadius: 8,
+                      spreadRadius: 2,
+                    ),
                   ],
-                  stops: const [0.0, 0.5, 1.0],
                 ),
               ),
-            ),
-          ),
-          // Timeline items
-          Column(
-            children: moments
-                .asMap()
-                .entries
-                .map(
-                  (entry) => Padding(
-                    padding: const EdgeInsets.only(bottom: 32),
-                    child: _TimelineItem(
-                      moment: entry.value,
-                      index: entry.key,
-                      gold: gold,
-                      brown: brown,
-                      isMobile: true,
-                      isLeft: true, // Always left on mobile
+              // Connecting line between dots
+              ...List.generate(moments.length - 1, (index) {
+                return Column(
+                  children: [
+                    Container(
+                      width: 2,
+                      height: 32,
+                      margin: const EdgeInsets.symmetric(vertical: 0),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            gold.withValues(alpha: 0.6),
+                            gold.withValues(alpha: 0.8),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                )
-                .toList(),
+                    Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: gold,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: gold.withValues(alpha: 0.4),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }),
+            ],
+          ),
+          const SizedBox(width: 16),
+          // Timeline items
+          Expanded(
+            child: Column(
+              children: moments
+                  .asMap()
+                  .entries
+                  .map(
+                    (entry) => Padding(
+                      padding: const EdgeInsets.only(bottom: 32),
+                      child: _TimelineItem(
+                        moment: entry.value,
+                        index: entry.key,
+                        gold: gold,
+                        brown: brown,
+                        isMobile: true,
+                        isLeft: true, // Always left on mobile
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
           ),
         ],
       );
     }
-    
+
     // Desktop: Center timeline with alternating sides
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -1432,7 +1575,7 @@ class _TimelineItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final creamBackground = const Color(0xFFF8F2EB);
     final lightYellow = gold.withValues(alpha: 0.15);
-    
+
     final imageWidget = _StoryImageFrame(
       image: moment.image,
       year: moment.date,
@@ -1448,40 +1591,10 @@ class _TimelineItem extends StatelessWidget {
     );
 
     if (isMobile) {
-      // Mobile: Simple vertical layout with timeline dot
-      return Row(
+      // Mobile: Simple vertical layout (dot is handled in parent timeline)
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Timeline dot
-          Container(
-            margin: const EdgeInsets.only(top: 12, right: 16),
-            width: 16,
-            height: 16,
-            decoration: BoxDecoration(
-              color: gold,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 3),
-              boxShadow: [
-                BoxShadow(
-                  color: gold.withValues(alpha: 0.4),
-                  blurRadius: 8,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-          ),
-          // Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                imageWidget,
-                const SizedBox(height: 16),
-                textWidget,
-              ],
-            ),
-          ),
-        ],
+        children: [imageWidget, const SizedBox(height: 16), textWidget],
       );
     }
 
@@ -1619,13 +1732,13 @@ class _StoryImageFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveBreakpoints.isMobile(context);
     final imageWidth = isMobile ? 150.0 : 180.0; // Smaller size, responsive
-    
+
     return Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
+      children: [
+        Container(
+          decoration: BoxDecoration(
             color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(color: lightYellow, width: 2),
             boxShadow: [
               BoxShadow(
@@ -1761,9 +1874,9 @@ class _StoryImageFrame extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-                    ),
-                  ),
-                ],
+            ),
+          ),
+      ],
     );
   }
 }
@@ -1804,6 +1917,165 @@ class _StoryTextContent extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _BlessingMessageSection extends StatefulWidget {
+  const _BlessingMessageSection();
+
+  @override
+  State<_BlessingMessageSection> createState() =>
+      _BlessingMessageSectionState();
+}
+
+class _BlessingMessageSectionState extends State<_BlessingMessageSection> {
+  final _messageController = TextEditingController();
+  bool _sending = false;
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final message = _messageController.text.trim();
+
+    debugPrint('📩 Blessing submitted');
+
+    if (message.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('សូមបញ្ចូលសារជ័យមង្គល'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _sending = true);
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (!mounted) return;
+
+    setState(() {
+      _sending = false;
+      _messageController.clear();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('អរគុណសម្រាប់សារជ័យមង្គល!'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const gold = Color(0xFFB88527);
+    const brown = Color(0xFF6F4C0B);
+    final isMobile = ResponsiveBreakpoints.isMobile(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Iconsax.message, color: gold, size: 22),
+              const SizedBox(width: 10),
+              Text(
+                'ផ្ញើសារជ័យមង្គល',
+                style: WeddingTextStyles.heading3.copyWith(
+                  color: gold,
+                  fontSize: 22,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'ចែករំលែកពាក្យសម្ដី និងការថ្លែងអំណរ ចំពោះក្រុមគ្រួសារយើងខ្ញុំ។',
+            style: WeddingTextStyles.body.copyWith(
+              color: brown.withValues(alpha: 0.8),
+            ),
+          ),
+          const SizedBox(height: 20),
+          TextField(
+            controller: _messageController,
+            maxLines: 4,
+            decoration: _inputDecoration('សារជ័យមង្គលរបស់អ្នក'),
+          ),
+          const SizedBox(height: 20),
+          Align(
+            alignment: isMobile ? Alignment.centerLeft : Alignment.centerRight,
+            child: ElevatedButton.icon(
+              onPressed: _sending ? null : _submit,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: gold,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              icon: _sending
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Iconsax.send_2, size: 18),
+              label: Text(
+                _sending ? 'កំពុងផ្ញើ...' : 'ផ្ញើសារ',
+                style: WeddingTextStyles.button.copyWith(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      filled: true,
+      fillColor: const Color(0xFFF8F2EB),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: const Color(0xFFB88527).withValues(alpha: 0.2),
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: const Color(0xFFB88527).withValues(alpha: 0.6),
+          width: 1.4,
+        ),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     );
   }
 }

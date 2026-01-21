@@ -10,21 +10,23 @@ class WeddingAgendaSection extends StatefulWidget {
 }
 
 class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
-  String _selectedDate = '23 មីនា'; // Default selected date
+  String _selectedDate = 'ថ្ងៃទី១'; // Default selected date
 
   final Map<String, List<Map<String, String>>> _agenda = {
-    '23 មីនា': [
-      {'time': 'ម៉ោង 1:30 រសៀល', 'event': 'ស្វាគមន៍ និងជួបជុំភ្ញៀវកិត្តិយស'},
-      {'time': 'ម៉ោង 2:00 រសៀល', 'event': 'ពីធីក្រុងពាលី'},
-      {'time': 'ម៉ោង 3:00 រសៀល', 'event': 'ពីធីសូត្រមន្តចម្រើនព្រះបរិត្ត'},
-      {'time': 'ម៉ោង 4:00 ល្ងាច', 'event': 'ពីធីជាវខាន់ស្លា'},
-      {'time': 'ម៉ោង 5:00 ល្ងាច', 'event': 'ពិសាភោជនាអាហារពេលល្ងាច'},
+    'ថ្ងៃទី១': [
+      {'time': 'ម៉ោង ១:០០ រសៀល', 'event': 'ពិធីក្រុងពាលី'},
+      {'time': 'ម៉ោង ២:០០ រសៀល', 'event': 'ពិធីកាត់សក់បង្កក់សិរី'},
+      {'time': 'ម៉ោង ៥:០០ រសៀល', 'event': 'ពិធីសូត្រមន្តចម្រើនព្រះបរិត្ត'},
+      {'time': 'ម៉ោង ៥:០០ ល្ងាច', 'event': 'អញ្ជើញ បងប្អូនញាតិមិត្ត និងភ្ញៀវកិត្តិយស ទទួលទានអាហារពេលល្ងាច'},
     ],
-    '24 មីនា': [
-      {'time': 'ម៉ោង 8:00 ព្រឹក', 'event': 'ពីធីកាត់សក់'},
-      {'time': 'ម៉ោង 9:00 ព្រឹក', 'event': 'ពីធីបង្វិលពពិល'},
-      {'time': 'ម៉ោង 12:00 ថ្ងៃត្រង់', 'event': 'ពិសាអាហារថ្ងៃត្រង់'},
-      {'time': 'ម៉ោង 6:00 ល្ងាច', 'event': 'ពិធីជប់លៀងមង្គលការ'},
+    'ថ្ងៃទី២': [
+      {'time': 'ម៉ោង ៦:៣០ ព្រឹក', 'event': 'ជួបជុំបងប្អូនញាតិមិត្ត និងភ្ញៀវកិត្តិយស រៀបចំរណ្តាប់ជំនូន'},
+      {'time': 'ម៉ោង ៧:០០ ព្រឹក', 'event': 'ពិធីហែជំនូន (កំណត់) ចូលរោងជ័យ ជូនខាន់ស្លា'},
+      {'time': 'ម៉ោង ៨:០០ ព្រឹក', 'event': 'អញ្ជើញភ្ញៀវកិត្តិយសទទួលទានអាហារពេលព្រឹក'},
+      {'time': 'ម៉ោង ៩:០០ ព្រឹក', 'event': 'ពិធីសំពះជួនដូន ជីតា និងចាក់ទឹកតែ'},
+      {'time': 'ម៉ោង ១០:០០ ព្រឹក', 'event': 'ក្រាបសំពះផ្ទឹម បង្វិលពពិល បាចផ្កាស្លាពរជ័យ និងព្រះរោងរោងសែន្យានាគ'},
+      {'time': 'ម៉ោង ១១:៣០ ព្រឹក', 'event': 'អញ្ជើញភ្ញៀវកិត្តិយសទទួលទានអាហារថ្ងៃត្រង់'},
+      {'time': 'ម៉ោង ៤:០០ រសៀល', 'event': 'អញ្ជើញភ្ញៀវកិត្តិយសពិសាភោជនីយអាហារ នៅភោជនីយដ្ឋាន មហាមង្គល ភូមិថ្មី ឃុំគោកធ្លកក្រោម ស្រុកជីក្រែង ខេត្តសៀមរាប ដោយមេត្រីភាព'},
     ],
   };
 
@@ -68,7 +70,7 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'កម្មវិធីសិរីមង្គល', // Wedding Ceremony Program
+                          'កម្មវិធីសិរីមង្គលអាពាហ៍ពិពាហ៍', // Wedding Ceremony Program
                           style: WeddingTextStyles.bayon(
                             fontSize: 32,
                             fontWeight: FontWeight.w600,
@@ -88,8 +90,8 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildDateTab('23 មីនា'),
-                        _buildDateTab('24 មីនា'),
+                        _buildDateTab('ថ្ងៃទី១'),
+                        _buildDateTab('ថ្ងៃទី២'),
                       ],
                     ),
                     const SizedBox(height: 20),

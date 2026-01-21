@@ -55,8 +55,8 @@ class _WelcomeCardState extends State<WelcomeCard> {
       
       final resp = await http
           .get(uri)
-          .timeout(const Duration(seconds: 10), onTimeout: () {
-        throw TimeoutException('Request timeout');
+          .timeout(const Duration(seconds: 30), onTimeout: () {
+        throw TimeoutException('Request timeout after 30 seconds');
       });
 
       if (!mounted) return;
@@ -198,9 +198,16 @@ class _WelcomeCardState extends State<WelcomeCard> {
       // Handle any errors (timeout, network, etc.)
       debugPrint('❌ Error loading guest name: $e');
       debugPrint('❌ Stack trace: $stackTrace');
+      
+      // Check if it's a timeout exception
+      if (e is TimeoutException) {
+        debugPrint('⏱️ Request timed out. Using default guest name.');
+      }
+      
       if (mounted) {
         setState(() {
           _loading = false;
+          // Keep default guest name on error
         });
       }
     }
@@ -331,8 +338,14 @@ class _WelcomeCardState extends State<WelcomeCard> {
                     child: ElevatedButton(
                       onPressed: () async {
                         // Start music after user interaction to avoid autoplay block.
-                        await WebMusicService().resumeBackgroundMusic();
-                        widget.onOpen();
+                        try {
+                          await WebMusicService().resumeBackgroundMusic();
+                        } catch (e, stack) {
+                          debugPrint('❌ resumeBackgroundMusic failed: $e');
+                          debugPrint('$stack');
+                        } finally {
+                          widget.onOpen();
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: accentColor,
