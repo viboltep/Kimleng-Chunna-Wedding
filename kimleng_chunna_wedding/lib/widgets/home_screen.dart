@@ -1409,95 +1409,70 @@ class _LoveStoryTimeline extends StatelessWidget {
     final isMobile = ResponsiveBreakpoints.isMobile(context);
 
     if (isMobile) {
-      // Mobile: Simple vertical timeline with connecting line
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Timeline line and dots column
-          Column(
-            children: [
-              // First dot
-              Container(
-                width: 16,
-                height: 16,
-                margin: const EdgeInsets.only(top: 12),
-                decoration: BoxDecoration(
-                  color: gold,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 3),
-                  boxShadow: [
-                    BoxShadow(
-                      color: gold.withValues(alpha: 0.4),
-                      blurRadius: 8,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-              ),
-              // Connecting line between dots
-              ...List.generate(moments.length - 1, (index) {
-                return Column(
-                  children: [
-                    Container(
-                      width: 2,
-                      height: 32,
-                      margin: const EdgeInsets.symmetric(vertical: 0),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            gold.withValues(alpha: 0.6),
-                            gold.withValues(alpha: 0.8),
+      // Mobile: timeline aligns dots to each card height
+      return Column(
+        children: moments.asMap().entries.map((entry) {
+          final isLast = entry.key == moments.length - 1;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 32),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Column(
+                    children: [
+                      Container(
+                        width: 16,
+                        height: 16,
+                        margin: const EdgeInsets.only(top: 6),
+                        decoration: BoxDecoration(
+                          color: gold,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 3),
+                          boxShadow: [
+                            BoxShadow(
+                              color: gold.withValues(alpha: 0.4),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
                           ],
                         ),
                       ),
-                    ),
-                    Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: gold,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 3),
-                        boxShadow: [
-                          BoxShadow(
-                            color: gold.withValues(alpha: 0.4),
-                            blurRadius: 8,
-                            spreadRadius: 2,
+                      if (!isLast)
+                        Expanded(
+                          child: Container(
+                            width: 2,
+                            margin: const EdgeInsets.symmetric(vertical: 6),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  gold.withValues(alpha: 0.6),
+                                  gold.withValues(alpha: 0.8),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _TimelineItem(
+                      moment: entry.value,
+                      index: entry.key,
+                      gold: gold,
+                      brown: brown,
+                      isMobile: true,
+                      isLeft: true, // Always left on mobile
                     ),
-                  ],
-                );
-              }),
-            ],
-          ),
-          const SizedBox(width: 16),
-          // Timeline items
-          Expanded(
-            child: Column(
-              children: moments
-                  .asMap()
-                  .entries
-                  .map(
-                    (entry) => Padding(
-                      padding: const EdgeInsets.only(bottom: 32),
-                      child: _TimelineItem(
-                        moment: entry.value,
-                        index: entry.key,
-                        gold: gold,
-                        brown: brown,
-                        isMobile: true,
-                        isLeft: true, // Always left on mobile
-                      ),
-                    ),
-                  )
-                  .toList(),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          );
+        }).toList(),
       );
     }
 
