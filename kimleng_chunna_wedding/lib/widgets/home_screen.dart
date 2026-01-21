@@ -1489,7 +1489,7 @@ class _LoveStoryTimeline extends StatelessWidget {
         children: moments.asMap().entries.map((entry) {
           final isLast = entry.key == moments.length - 1;
           return Padding(
-            padding: const EdgeInsets.only(bottom: 32),
+            padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
