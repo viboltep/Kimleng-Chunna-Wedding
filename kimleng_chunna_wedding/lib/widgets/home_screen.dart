@@ -192,8 +192,13 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _playing = false;
   Timer? _countdownTimer;
   String _countdown = '';
+  ({int days, int hours, int minutes, int seconds})? _countdownParts;
 
-  void _openGalleryViewer(BuildContext context, int startIndex) {
+  static void openImageViewer(
+    BuildContext context,
+    List<String> images,
+    int startIndex,
+  ) {
     final controller = PageController(initialPage: startIndex);
     int currentIndex = startIndex;
     showDialog(
@@ -237,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       physics: const BouncingScrollPhysics(),
                       onPageChanged: (idx) =>
                           setState(() => currentIndex = idx),
-                      itemCount: _galleryImages.length,
+                      itemCount: images.length,
                       itemBuilder: (context, idx) => Center(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
@@ -249,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Container(
                               color: Colors.black,
                               child: Image.asset(
-                                _galleryImages[idx],
+                                images[idx],
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -278,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          'រូបភាព ${currentIndex + 1} / ${_galleryImages.length}',
+                          'រូបភាព ${currentIndex + 1} / ${images.length}',
                           style: WeddingTextStyles.body.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -368,6 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (diff.isNegative) {
       setState(() {
         _countdown = 'It\'s celebration time!';
+        _countdownParts = null;
       });
       _countdownTimer?.cancel();
       return;
@@ -379,8 +385,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final seconds = diff.inSeconds % 60;
 
     setState(() {
-      _countdown =
-          '${days}d ${hours}h ${minutes}m ${seconds.toString().padLeft(2, '0')}s';
+      _countdownParts = (
+        days: days,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+      );
+      _countdown = '';
     });
   }
 
@@ -408,14 +419,18 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _HeroInvite(countdown: _countdown),
+                  _HeroInvite(
+                    countdownParts: _countdownParts,
+                    celebrationText: _countdown,
+                  ),
                   const SizedBox(height: 48),
                   _ScheduleCard(),
                   const SizedBox(height: 48),
                   _MapBlessingRow(),
                   const SizedBox(height: 48),
                   _GalleryCollage(
-                    onImageTap: (index) => _openGalleryViewer(context, index),
+                    onImageTap: (index) =>
+                        _HomeScreenState.openImageViewer(context, _galleryImages, index),
                   ),
                   const SizedBox(height: 48),
                   _LoveStorySection(),
@@ -437,9 +452,13 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _HeroInvite extends StatelessWidget {
-  const _HeroInvite({required this.countdown});
+  const _HeroInvite({
+    required this.countdownParts,
+    required this.celebrationText,
+  });
 
-  final String countdown;
+  final ({int days, int hours, int minutes, int seconds})? countdownParts;
+  final String celebrationText;
   @override
   Widget build(BuildContext context) {
     final viewHeight = MediaQuery.of(context).size.height;
@@ -624,15 +643,18 @@ class _HeroInvite extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 32),
-                            Text(
-                              countdown,
-                              textAlign: TextAlign.center,
-                              style: WeddingTextStyles.heading3.copyWith(
-                                color: const Color(0xFF6F4C0B),
-                                fontSize: 26,
-                                fontWeight: FontWeight.w700,
+                            if (countdownParts != null)
+                              _CountdownRow(parts: countdownParts!)
+                            else if (celebrationText.isNotEmpty)
+                              Text(
+                                celebrationText,
+                                textAlign: TextAlign.center,
+                                style: WeddingTextStyles.heading3.copyWith(
+                                  color: const Color(0xFF6F4C0B),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
                             const SizedBox(height: 32),
                             _CalendarButton(),
                           ],
@@ -646,6 +668,57 @@ class _HeroInvite extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class _CountdownRow extends StatelessWidget {
+  const _CountdownRow({required this.parts});
+
+  final ({int days, int hours, int minutes, int seconds}) parts;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = ResponsiveBreakpoints.isMobile(context);
+    final numberStyle = TextStyle(
+      fontFamily: 'Koulen',
+      fontSize: isMobile ? 28 : 40,
+      fontWeight: FontWeight.w600,
+      color: Colors.black,
+    );
+    final labelStyle = TextStyle(
+      fontFamily: 'Battambang',
+      fontSize: isMobile ? 10 : 12,
+      letterSpacing: isMobile ? 0.5 : 1.1,
+      color: const Color(0xFF9E9E9E),
+    );
+    final spacing = isMobile ? 16.0 : 28.0;
+
+    Widget buildUnit(String value, String labelKh) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(value, style: numberStyle),
+          const SizedBox(height: 4),
+          Text(labelKh, style: labelStyle),
+        ],
+      );
+    }
+
+    String two(int v) => v.toString().padLeft(2, '0');
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buildUnit(parts.days.toString(), 'ថ្ងៃ'),
+        SizedBox(width: spacing),
+        buildUnit(two(parts.hours), 'ម៉ោង'),
+        SizedBox(width: spacing),
+        buildUnit(two(parts.minutes), 'នាទី'),
+        SizedBox(width: spacing),
+        buildUnit(two(parts.seconds), 'វិនាទី'),
+      ],
     );
   }
 }
@@ -1400,9 +1473,11 @@ class _LoveStoryTimeline extends StatelessWidget {
   });
 
   final List<({String title, String date, String detail, String image})>
-  moments;
+      moments;
   final Color gold;
   final Color brown;
+
+  List<String> get _images => moments.map((m) => m.image).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -1466,6 +1541,7 @@ class _LoveStoryTimeline extends StatelessWidget {
                       brown: brown,
                       isMobile: true,
                       isLeft: true, // Always left on mobile
+                      images: _images,
                     ),
                   ),
                 ],
@@ -1517,6 +1593,7 @@ class _LoveStoryTimeline extends StatelessWidget {
                         brown: brown,
                         isMobile: false,
                         isLeft: entry.key % 2 == 0,
+                        images: _images,
                       ),
                     ),
                   )
@@ -1537,6 +1614,7 @@ class _TimelineItem extends StatelessWidget {
     required this.brown,
     required this.isMobile,
     required this.isLeft,
+    required this.images,
   });
 
   final ({String title, String date, String detail, String image}) moment;
@@ -1545,17 +1623,28 @@ class _TimelineItem extends StatelessWidget {
   final Color brown;
   final bool isMobile;
   final bool isLeft;
+  final List<String> images;
 
   @override
   Widget build(BuildContext context) {
     final creamBackground = const Color(0xFFF8F2EB);
     final lightYellow = gold.withValues(alpha: 0.15);
 
-    final imageWidget = _StoryImageFrame(
-      image: moment.image,
-      year: moment.date,
-      gold: gold,
-      lightYellow: lightYellow,
+    final imageIndex = images.indexOf(moment.image);
+    final imageWidget = Builder(
+      builder: (context) => _StoryImageFrame(
+        image: moment.image,
+        year: moment.date,
+        gold: gold,
+        lightYellow: lightYellow,
+        onTap: imageIndex >= 0
+            ? () {
+                if (context.mounted) {
+                  _HomeScreenState.openImageViewer(context, images, imageIndex);
+                }
+              }
+            : null,
+      ),
     );
 
     final textWidget = _StoryTextContent(
@@ -1600,11 +1689,13 @@ class _TimelineItem extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Column(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          textWidget,
-                          const SizedBox(height: 16),
+                          Expanded(
+                            child: textWidget,
+                          ),
+                          const SizedBox(width: 16),
                           imageWidget,
                         ],
                       ),
@@ -1673,12 +1764,14 @@ class _TimelineItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Column(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    textWidget,
-                    const SizedBox(height: 16),
                     imageWidget,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: textWidget,
+                    ),
                   ],
                 ),
               ),
@@ -1696,21 +1789,27 @@ class _StoryImageFrame extends StatelessWidget {
     required this.year,
     required this.gold,
     required this.lightYellow,
+    this.onTap,
   });
 
   final String image;
   final String year;
   final Color gold;
   final Color lightYellow;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final isMobile = ResponsiveBreakpoints.isMobile(context);
     final imageWidth = isMobile ? 150.0 : 180.0; // Smaller size, responsive
 
-    return Stack(
-      children: [
-        Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: MouseRegion(
+        cursor: onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        child: Stack(
+          children: [
+            Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -1851,7 +1950,9 @@ class _StoryImageFrame extends StatelessWidget {
               ),
             ),
           ),
-      ],
+          ],
+        ),
+      ),
     );
   }
 }
@@ -1883,13 +1984,42 @@ class _StoryTextContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Text(
-          detail,
-          style: WeddingTextStyles.body.copyWith(
-            color: brown.withValues(alpha: 0.8),
-            height: 1.6,
-            fontSize: 14,
-          ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '"',
+              style: WeddingTextStyles.body.copyWith(
+                color: gold.withValues(alpha: 0.6),
+                fontSize: 32,
+                height: 1.2,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  detail,
+                  style: WeddingTextStyles.body.copyWith(
+                    color: brown.withValues(alpha: 0.8),
+                    height: 1.6,
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ),
+            Text(
+              '"',
+              style: WeddingTextStyles.body.copyWith(
+                color: gold.withValues(alpha: 0.6),
+                fontSize: 32,
+                height: 1.2,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ],
         ),
       ],
     );
