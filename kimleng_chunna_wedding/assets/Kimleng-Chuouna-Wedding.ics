@@ -1,0 +1,29 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Wedding Invitation//ICS//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VTIMEZONE
+TZID:Asia/Phnom_Penh
+X-LIC-LOCATION:Asia/Phnom_Penh
+BEGIN:STANDARD
+TZOFFSETFROM:+0700
+TZOFFSETTO:+0700
+TZNAME:ICT
+DTSTART:19700101T000000
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:bccdfe62-ed94-4fe2-a9b1-acd472fcda97@wedding.local
+DTSTAMP:20260123T083041Z
+SUMMARY:អាពាហ៍ពិពាហ៍ គឹមឡេង និង ជូណា • Wedding of Kimleng & Chunna
+LOCATION:ភោជនីយដ្ឋាន មហារមង្គល
+DTSTART;TZID=Asia/Phnom_Penh:20260301T170000
+DTEND;TZID=Asia/Phnom_Penh:20260301T210000
+DESCRIPTION:ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦\nវេលាម៉ោង ៥ រសៀល\nនៅភោជនីយដ្ឋាន មហារមង្គល\n\nGoogle Maps:\nhttps://maps.app.goo.gl/pQDJ3Y9Q4U5HzYDBA
+URL:https://maps.app.goo.gl/pQDJ3Y9Q4U5HzYDBA
+ATTACH;FMTTYPE=text/html:https://maps.app.goo.gl/pQDJ3Y9Q4U5HzYDBA
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR

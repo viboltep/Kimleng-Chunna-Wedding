@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../constants/assets.dart';
 import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
@@ -145,38 +146,43 @@ class _ShimmerImageAssetState extends State<_ShimmerImageAsset> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        if (_isLoading)
-          _ShimmerImage(
-            width: widget.width,
-            height: widget.height,
-            borderRadius: widget.borderRadius,
-          ),
-        Image.asset(
-          widget.imagePath,
-          width: widget.width,
-          height: widget.height,
-          fit: widget.fit,
-          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-            if (wasSynchronouslyLoaded || frame != null) {
-              if (_isLoading) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    setState(() => _isLoading = false);
-                  }
-                });
-              }
-              return child;
-            }
-            return _ShimmerImage(
+    final borderRadius = widget.borderRadius ?? BorderRadius.zero;
+    return ClipRRect(
+      borderRadius: borderRadius,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          if (_isLoading)
+            _ShimmerImage(
               width: widget.width,
               height: widget.height,
               borderRadius: widget.borderRadius,
-            );
-          },
-        ),
-      ],
+            ),
+          Image.asset(
+            widget.imagePath,
+            width: widget.width,
+            height: widget.height,
+            fit: widget.fit,
+            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+              if (wasSynchronouslyLoaded || frame != null) {
+                if (_isLoading) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      setState(() => _isLoading = false);
+                    }
+                  });
+                }
+                return child;
+              }
+              return _ShimmerImage(
+                width: widget.width,
+                height: widget.height,
+                borderRadius: widget.borderRadius,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -414,9 +420,12 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            padding: const EdgeInsets.symmetric(
+              vertical: 20,
+              horizontal: 20,
+            ),
             child: ResponsiveContainer(
-              maxWidth: 1200,
+              maxWidth: ResponsiveBreakpoints.isDesktop(context) ? double.infinity : 1200,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -480,8 +489,8 @@ class _HeroInvite extends StatelessWidget {
         ),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final isNarrow = constraints.maxWidth < 700;
-            final flowerSize = isNarrow ? 100.0 : 400.0;
+            final isNarrow = constraints.maxWidth < 740;
+            final flowerSize = isNarrow ? 180.0 : 400.0;
             final horizontalPadding = isNarrow ? 60.0 : 100.0;
 
             return Stack(
@@ -1316,31 +1325,40 @@ class _GalleryCollage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 18),
-          GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 0,
-              mainAxisSpacing: 0,
-              mainAxisExtent: 250, // Fixed height for all images
-            ),
+          MasonryGridView.count(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _galleryImages.length,
-            itemBuilder: (context, index) => GestureDetector(
-              onTap: () => onImageTap(index),
-              child: SizedBox(
-                width: double.infinity,
-                height: 250,
-                child: ClipRect(
-                  child: _ShimmerImageAsset(
-                    imagePath: _galleryImages[index],
-                    width: double.infinity,
-                    height: 250,
-                    fit: BoxFit.cover,
+            itemBuilder: (context, index) {
+              // Create staggered visual effect by varying container heights slightly
+              // but images always maintain 250px height
+              final baseHeight = 250.0;
+              final variation = (index % 3) * 20.0 - 20.0; // -20, 0, or 20
+              final containerHeight = baseHeight + variation;
+              
+              return GestureDetector(
+                onTap: () => onImageTap(index),
+                child: Container(
+                  height: containerHeight,
+                  child: Center(
+                    child: SizedBox(
+                      height: 250, // Fixed height for all images (portrait and landscape)
+                      width: double.infinity,
+                      child: _ShimmerImageAsset(
+                        imagePath: _galleryImages[index],
+                        width: double.infinity,
+                        height: 250,
+                        fit: BoxFit.cover,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ],
       ),
@@ -1406,35 +1424,14 @@ class _LoveStorySection extends StatelessWidget {
         ],
       ),
       padding: const EdgeInsets.all(24),
-      child: isMobile
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _LoveStoryHeader(gold: gold),
-                const SizedBox(height: 18),
-                _LoveStoryTimeline(moments: moments, gold: gold, brown: brown),
-              ],
-            )
-          : Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _LoveStoryHeader(gold: gold),
-                      const SizedBox(height: 18),
-                      _LoveStoryTimeline(
-                        moments: moments,
-                        gold: gold,
-                        brown: brown,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _LoveStoryHeader(gold: gold),
+          const SizedBox(height: 18),
+          _LoveStoryTimeline(moments: moments, gold: gold, brown: brown),
+        ],
+      ),
     );
   }
 }
@@ -1485,120 +1482,119 @@ class _LoveStoryTimeline extends StatelessWidget {
     final isMobile = ResponsiveBreakpoints.isMobile(context);
 
     if (isMobile) {
-      // Mobile: timeline with minimal spacing
-      return Column(
-        children: moments.asMap().entries.map((entry) {
-          final isLast = entry.key == moments.length - 1;
-          return Padding(
-            padding: EdgeInsets.only(bottom: isLast ? 0 : 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 16,
-                      height: 16,
-                      margin: const EdgeInsets.only(top: 6),
-                      decoration: BoxDecoration(
-                        color: gold,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 3),
-                        boxShadow: [
-                          BoxShadow(
-                            color: gold.withValues(alpha: 0.4),
-                            blurRadius: 8,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
+      // Mobile: Left-aligned timeline with desktop-style cards
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              // Vertical timeline line on the left
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: Container(
+                  width: 2,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        gold.withValues(alpha: 0.3),
+                        gold,
+                        gold.withValues(alpha: 0.3),
+                      ],
+                      stops: const [0.0, 0.5, 1.0],
                     ),
-                    if (!isLast)
-                      Container(
-                        width: 2,
-                        height: 12,
-                        margin: const EdgeInsets.only(top: 4),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              gold.withValues(alpha: 0.6),
-                              gold.withValues(alpha: 0.8),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _TimelineItem(
-                    moment: entry.value,
-                    index: entry.key,
-                    gold: gold,
-                    brown: brown,
-                    isMobile: true,
-                    isLeft: true, // Always left on mobile
-                    images: _images,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      );
-    }
-
-    // Desktop: Center timeline with alternating sides
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Stack(
-          children: [
-            // Vertical timeline line
-            Positioned(
-              left: constraints.maxWidth / 2 - 1,
-              top: 0,
-              bottom: 0,
-              child: Container(
-                width: 2,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      gold.withValues(alpha: 0.3),
-                      gold,
-                      gold.withValues(alpha: 0.3),
-                    ],
-                    stops: const [0.0, 0.5, 1.0],
                   ),
                 ),
               ),
-            ),
-            // Timeline items
-            Column(
-              children: moments
-                  .asMap()
-                  .entries
-                  .map(
-                    (entry) => Padding(
-                      padding: const EdgeInsets.only(bottom: 48),
-                      child: _TimelineItem(
-                        moment: entry.value,
-                        index: entry.key,
-                        gold: gold,
-                        brown: brown,
-                        isMobile: false,
-                        isLeft: entry.key % 2 == 0,
-                        images: _images,
+              // Timeline items
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  children: moments
+                      .asMap()
+                      .entries
+                      .map(
+                        (entry) => Padding(
+                          padding: const EdgeInsets.only(bottom: 48),
+                          child: _TimelineItem(
+                            moment: entry.value,
+                            index: entry.key,
+                            gold: gold,
+                            brown: brown,
+                            isMobile: true,
+                            isLeft: false, // All items on right side of timeline
+                            images: _images,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    // Desktop: Center timeline with alternating left/right layout
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = constraints.maxWidth > 1200 ? 1200.0 : constraints.maxWidth;
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: Stack(
+                children: [
+                  // Vertical timeline line in center
+                  Positioned(
+                    left: maxWidth / 2 - 1,
+                    top: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 2,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            gold.withValues(alpha: 0.3),
+                            gold,
+                            gold.withValues(alpha: 0.3),
+                          ],
+                          stops: const [0.0, 0.5, 1.0],
+                        ),
                       ),
                     ),
-                  )
-                  .toList(),
+                  ),
+                  // Timeline items
+                  Column(
+                    children: moments
+                        .asMap()
+                        .entries
+                        .map(
+                          (entry) => Padding(
+                            padding: const EdgeInsets.only(bottom: 48),
+                            child: _TimelineItem(
+                              moment: entry.value,
+                              index: entry.key,
+                              gold: gold,
+                              brown: brown,
+                              isMobile: false,
+                              isLeft: entry.key % 2 == 0,
+                              images: _images,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         );
       },
     );
@@ -1654,17 +1650,68 @@ class _TimelineItem extends StatelessWidget {
     );
 
     if (isMobile) {
-      // Mobile: Simple vertical layout (dot is handled in parent timeline)
-      return Column(
+      // Mobile: Image on top, text content below
+      return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [imageWidget, const SizedBox(height: 16), textWidget],
+        children: [
+          // Timeline dot on the left
+          Container(
+            width: 20,
+            height: 20,
+            margin: const EdgeInsets.only(right: 24),
+            decoration: BoxDecoration(
+              color: gold,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 4),
+              boxShadow: [
+                BoxShadow(
+                  color: gold.withValues(alpha: 0.5),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+          ),
+          // Content on the right side of timeline
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: creamBackground,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Image on top
+                  Center(
+                    child: imageWidget,
+                  ),
+                  const SizedBox(height: 16),
+                  // Text content below image
+                  textWidget,
+                ],
+              ),
+            ),
+          ),
+        ],
       );
     }
 
     // Desktop: Alternating left/right layout with center timeline
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
         // Left side content
         if (isLeft) ...[
           Expanded(
@@ -1695,7 +1742,9 @@ class _TimelineItem extends StatelessWidget {
                             child: textWidget,
                           ),
                           const SizedBox(width: 16),
-                          imageWidget,
+                          Flexible(
+                            child: imageWidget,
+                          ),
                         ],
                       ),
                     ),
@@ -1766,7 +1815,9 @@ class _TimelineItem extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    imageWidget,
+                    Flexible(
+                      child: imageWidget,
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: textWidget,
@@ -1778,6 +1829,8 @@ class _TimelineItem extends StatelessWidget {
           ),
         ],
       ],
+    );
+      },
     );
   }
 }
@@ -1806,42 +1859,43 @@ class _StoryImageFrame extends StatelessWidget {
       onTap: onTap,
       child: MouseRegion(
         cursor: onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
-        child: Stack(
-          children: [
-            Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: lightYellow, width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: SizedBox(
-              width: imageWidth, // Smaller responsive width
-              child: AspectRatio(
-                aspectRatio: 3 / 4, // Maintains aspect ratio
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return _ShimmerImageAsset(
-                      imagePath: image,
-                      width: constraints.maxWidth,
-                      height: constraints.maxHeight,
-                      fit: BoxFit.cover,
-                      borderRadius: BorderRadius.circular(10),
-                    );
-                  },
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final maxImageWidth = constraints.maxWidth.isFinite 
+                ? constraints.maxWidth.clamp(0.0, imageWidth)
+                : imageWidth;
+            return Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: lightYellow, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: SizedBox(
+                      width: maxImageWidth,
+                      child: AspectRatio(
+                        aspectRatio: 3 / 4, // Maintains aspect ratio
+                        child: _ShimmerImageAsset(
+                          imagePath: image,
+                          width: maxImageWidth,
+                          height: maxImageWidth * (4 / 3),
+                          fit: BoxFit.cover,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-        ),
         // Decorative gold corners on image
         Positioned(
           top: 0,
@@ -1949,7 +2003,9 @@ class _StoryImageFrame extends StatelessWidget {
               ),
             ),
           ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );
@@ -2199,6 +2255,7 @@ class _ParentMessages extends StatelessWidget {
             'We, the parents of the bride and groom, sincerely apologize if we could not invite you in person and respectfully invite you to honor us with your presence at the wedding of our children.',
         titleColor: gold,
         bodyColor: brown,
+        isMobile: isMobile,
       ),
       const SizedBox(width: 20, height: 20),
       _MessageCard(
@@ -2209,30 +2266,123 @@ class _ParentMessages extends StatelessWidget {
             'We, the parents of the bride and groom, express our deepest gratitude and heartfelt blessings to all distinguished guests for taking your valuable time to join the wedding of our son and daughter. Your presence is our greatest honor and pride.',
         titleColor: gold,
         bodyColor: brown,
+        isMobile: isMobile,
       ),
     ];
 
     if (isMobile) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children
-            .map(
-              (child) => Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: child,
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Section header
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: gold.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Iconsax.message, color: gold, size: 20),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'សារពីមាតាបិតា',
+                  style: WeddingTextStyles.heading3.copyWith(
+                    color: gold,
+                    fontSize: 22,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            // First message card
+            children[0],
+            const SizedBox(height: 20),
+            // Divider
+            Container(
+              height: 1,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.transparent,
+                    gold.withValues(alpha: 0.3),
+                    Colors.transparent,
+                  ],
+                ),
               ),
-            )
-            .toList(),
+            ),
+            const SizedBox(height: 20),
+            // Second message card
+            children[2],
+          ],
+        ),
       );
     }
 
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    // Desktop: Same style as mobile but with side-by-side layout
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: children[0]),
-          const SizedBox(width: 20),
-          Expanded(child: children[2]),
+          // Section header
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: gold.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Iconsax.message, color: gold, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'សារពីមាតាបិតា',
+                style: WeddingTextStyles.heading3.copyWith(
+                  color: gold,
+                  fontSize: 22,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          // Message cards side by side
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: children[0]),
+                const SizedBox(width: 20),
+                Expanded(child: children[2]),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -2246,6 +2396,7 @@ class _MessageCard extends StatelessWidget {
     this.bodyEnglish,
     required this.titleColor,
     required this.bodyColor,
+    this.isMobile = false,
   });
 
   final String title;
@@ -2253,47 +2404,79 @@ class _MessageCard extends StatelessWidget {
   final String? bodyEnglish;
   final Color titleColor;
   final Color bodyColor;
+  final bool isMobile;
 
   @override
   Widget build(BuildContext context) {
+    // Enhanced card design - same for both mobile and desktop
+    final fontSize = isMobile ? 14.0 : 15.0;
+    final titleFontSize = isMobile ? 18.0 : 20.0;
+    final padding = isMobile ? 18.0 : 20.0;
+    
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        color: const Color(0xFFF8F2EB),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: titleColor.withValues(alpha: 0.2),
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: WeddingTextStyles.heading3.copyWith(
-              color: titleColor,
-              fontSize: 20,
+          // Title with decorative underline
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: WeddingTextStyles.heading3.copyWith(
+                    color: titleColor,
+                    fontSize: titleFontSize,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: 40,
+            height: 2,
+            decoration: BoxDecoration(
+              color: titleColor.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(1),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
+          // Khmer text
           Text(
             body,
             style: WeddingTextStyles.body.copyWith(
               color: bodyColor,
-              height: 1.6,
+              height: 1.7,
+              fontSize: fontSize,
             ),
           ),
+          // English text if available
           if (bodyEnglish != null) ...[
-            const SizedBox(height: 10),
-            Text(
-              bodyEnglish!,
-              style: WeddingTextStyles.body.copyWith(
-                color: bodyColor.withValues(alpha: 0.85),
-                height: 1.5,
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                bodyEnglish!,
+                style: WeddingTextStyles.body.copyWith(
+                  color: bodyColor.withValues(alpha: 0.8),
+                  height: 1.6,
+                  fontSize: fontSize - 1,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ),
           ],
