@@ -187,7 +187,6 @@ class _AnimatedMusicButtonState extends State<AnimatedMusicButton>
 /// Animated audio bar for visualization
 class _AudioBar extends StatelessWidget {
   const _AudioBar({
-    super.key,
     required this.controller,
     required this.phase,
     required this.color,
