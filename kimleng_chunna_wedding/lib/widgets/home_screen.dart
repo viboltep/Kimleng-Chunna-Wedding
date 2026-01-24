@@ -13,6 +13,8 @@ import '../services/web_music_service.dart';
 import '../theme/wedding_theme.dart';
 import '../utils/responsive.dart';
 import 'wedding_agenda_section.dart';
+import 'animated_music_button.dart';
+import 'gift_section.dart';
 import 'map_embed_stub.dart'
     if (dart.library.html) 'map_embed_web.dart'
     as map_embed;
@@ -413,8 +415,8 @@ class _HomeScreenState extends State<HomeScreen> {
     const background = Color(0xFFF8F2EB); // Frame background from Figma
     return Scaffold(
       backgroundColor: background,
-      floatingActionButton: _GlassMusicButton(
-        playing: _playing,
+      floatingActionButton: AnimatedMusicButton(
+        isPlaying: _playing,
         onPressed: _toggleMusic,
       ),
       body: SafeArea(
@@ -434,22 +436,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     celebrationText: _countdown,
                   ),
                   const SizedBox(height: 48),
-                  const WeddingAgendaSection(),
-                  const SizedBox(height: 48),
-                  _MapBlessingRow(),
-                  const SizedBox(height: 48),
                   _GalleryCollage(
                     onImageTap: (index) =>
                         _HomeScreenState.openImageViewer(context, _galleryImages, index),
                   ),
                   const SizedBox(height: 48),
                   _LoveStorySection(),
-
+                  const SizedBox(height: 48),
+                  const WeddingAgendaSection(),
+                  const SizedBox(height: 48),
+                  _MapBlessingRow(),
                   const SizedBox(height: 48),
                   _ParentMessages(),
                   const SizedBox(height: 48),
-
-                  _BottomNote(),
+                  const GiftSection(),
                   _FooterNote(),
                 ],
               ),
@@ -2671,44 +2671,3 @@ class _GiftQrCard extends StatelessWidget {
   }
 }
 
-class _GlassMusicButton extends StatelessWidget {
-  const _GlassMusicButton({required this.playing, required this.onPressed});
-
-  final bool playing;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    const gold = Color(0xFFB88527);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10, right: 4),
-      child: Material(
-        color: gold,
-        elevation: 4,
-        shape: const CircleBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          splashColor: Colors.white.withValues(alpha: 0.25),
-          highlightColor: Colors.white.withValues(alpha: 0.12),
-          onTap: onPressed,
-          child: SizedBox(
-            width: 52,
-            height: 52,
-            child: Center(
-              child: SvgPicture.asset(
-                playing ? 'assets/icons/pause.svg' : 'assets/icons/play.svg',
-                width: 20,
-                height: 20,
-                colorFilter: const ColorFilter.mode(
-                  Colors.white,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
