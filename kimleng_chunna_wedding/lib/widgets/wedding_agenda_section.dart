@@ -219,7 +219,7 @@ class _TimelineDay extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

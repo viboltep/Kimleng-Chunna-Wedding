@@ -734,9 +734,7 @@ class _CountdownRow extends StatelessWidget {
 }
 
 class _MapSection extends StatelessWidget {
-  const _MapSection({super.key});
-
-  static bool _mapViewRegistered = false;
+  const _MapSection();
 
   @override
   Widget build(BuildContext context) {
@@ -856,7 +854,7 @@ class _MapSection extends StatelessWidget {
 }
 
 class _MapBlessingRow extends StatelessWidget {
-  const _MapBlessingRow({super.key});
+  const _MapBlessingRow();
 
   @override
   Widget build(BuildContext context) {
@@ -902,82 +900,11 @@ class _MapBlessingRow extends StatelessWidget {
   }
 }
 
-class _ColorChip extends StatelessWidget {
-  const _ColorChip({
-    required this.label,
-    required this.hex,
-    required this.color,
-  });
 
-  final String label;
-  final String hex;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.12),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: WeddingTextStyles.body.copyWith(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                hex,
-                style: WeddingTextStyles.body.copyWith(
-                  color: Colors.black54,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _CalendarButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const gold = Color(0xFFB88527);
     return SizedBox(
       width: 240,
       child: ElevatedButton(
@@ -1132,158 +1059,6 @@ END:VCALENDAR''';
   }
 }
 
-class _ScheduleCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    const gold = Color(0xFFB88527);
-    const brown = Color(0xFF6F4C0B);
-
-    const dayOneTitle = 'ថ្ងៃទី១៖ ថ្ងៃសៅរ៍ ទី២៨ ខែកុម្ភៈ ឆ្នាំ ២០២៦';
-    const dayOneItems = [
-      'ពិធីក្រុងពិលី • ពិធីកាត់សក់បង្កក់សិរី • ពិធីសូត្រមន្តចម្រើនព្រះបរិត្ត',
-      'ពិធីកាត់ជំនួន (កំណត់) ចូលរោងជ័យ ជួបខាន់ស្លា',
-      'អញ្ជើញភ្ញៀវកិត្តិយសទទួលទានអាហារពេលព្រឹក',
-      'ពិធីស្រាសំពះផ្ទឹម កាត់ខាន់ស្លា ពិលពាន',
-    ];
-
-    const dayTwoTitle = 'ថ្ងៃទី២៖ ថ្ងៃអាទិត្យ ទី០១ ខែមីនា ឆ្នាំ ២០២៦';
-    const dayTwoItems = [
-      'ជួបជុំបងប្អូនញាតិមិត្ត និងភ្ញៀវកិត្តិយស រៀបចំហែរជំនួន',
-      'អញ្ជើញ បងប្អូនញាតិមិត្ត និងភ្ញៀវកិត្តិយស ទទួលបានអាហារពេលល្ងាច',
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: gold.withValues(alpha: 0.12),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Iconsax.calendar, color: gold, size: 18),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'កម្មវិធីមង្គលការ',
-                      style: WeddingTextStyles.heading3.copyWith(
-                        color: gold,
-                        fontSize: 22,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                _AgendaDayCard(
-                  title: dayOneTitle,
-                  items: dayOneItems,
-                  accent: gold,
-                  textColor: brown,
-                ),
-                const SizedBox(height: 12),
-                _AgendaDayCard(
-                  title: dayTwoTitle,
-                  items: dayTwoItems,
-                  accent: gold,
-                  textColor: brown,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AgendaDayCard extends StatelessWidget {
-  const _AgendaDayCard({
-    required this.title,
-    required this.items,
-    required this.accent,
-    required this.textColor,
-  });
-
-  final String title;
-  final List<String> items;
-  final Color accent;
-  final Color textColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: accent.withValues(alpha: 0.18)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: WeddingTextStyles.heading3.copyWith(
-              color: accent,
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(height: 10),
-          ...items.map(
-            (line) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 6),
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: accent,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      line,
-                      style: WeddingTextStyles.body.copyWith(
-                        color: textColor,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _GalleryCollage extends StatelessWidget {
   const _GalleryCollage({required this.onImageTap});
 
@@ -1341,7 +1116,7 @@ class _GalleryCollage extends StatelessWidget {
               
               return GestureDetector(
                 onTap: () => onImageTap(index),
-                child: Container(
+                child: SizedBox(
                   height: containerHeight,
                   child: Center(
                     child: SizedBox(
@@ -1371,7 +1146,6 @@ class _LoveStorySection extends StatelessWidget {
   Widget build(BuildContext context) {
     const gold = Color(0xFFB88527);
     const brown = Color(0xFF6F4C0B);
-    final isMobile = ResponsiveBreakpoints.isMobile(context);
 
     final moments = [
       (
@@ -2486,99 +2260,6 @@ class _MessageCard extends StatelessWidget {
   }
 }
 
-class _BottomNote extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final gold = const Color(0xFFB88527);
-    final brown = const Color(0xFF6F4C0B);
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            'អំណោយអាពាហ៍ពិពាហ៍',
-            style: WeddingTextStyles.heading3.copyWith(
-              color: gold,
-              fontSize: 20,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'សូមទាញអំណោយចូលគណនីធនាគាររបស់យើងខ្ញុំ ឬផ្ទាល់ខ្លួននៅថ្ងៃពិធី។',
-            textAlign: TextAlign.center,
-            style: WeddingTextStyles.body.copyWith(color: brown),
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 14,
-            runSpacing: 12,
-            alignment: WrapAlignment.center,
-            children: [
-              _GiftQrCard(
-                title: 'ដុល្លារ',
-                imagePath: Assets.qrDollar,
-                gold: gold,
-                brown: brown,
-              ),
-              _GiftQrCard(
-                title: 'រៀល',
-                imagePath: Assets.qrRiel,
-                gold: gold,
-                brown: brown,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: 220,
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                final uri = Uri.parse('https://pay.ababank.com/oRF8/z80qz2zr');
-                final ok = await launchUrl(
-                  uri,
-                  mode: LaunchMode.externalApplication,
-                );
-                if (!ok && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Could not open ABA PayWay.')),
-                  );
-                }
-              },
-              icon: const Icon(Iconsax.card, size: 18),
-              label: Text(
-                'បើកកម្មវិធីបង់ប្រាក់',
-                style: WeddingTextStyles.button.copyWith(fontSize: 14),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: gold,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _FooterNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -2600,69 +2281,6 @@ class _FooterNote extends StatelessWidget {
             ' your special day',
             style: WeddingTextStyles.body.copyWith(
               color: brown.withValues(alpha: 0.9),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _GiftQrCard extends StatelessWidget {
-  const _GiftQrCard({
-    required this.title,
-    required this.imagePath,
-    required this.gold,
-    required this.brown,
-  });
-
-  final String title;
-  final String imagePath;
-  final Color gold;
-  final Color brown;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 150,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 6),
-          ),
-        ],
-        border: Border.all(color: gold.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: WeddingTextStyles.heading3.copyWith(
-              color: gold,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 8),
-          AspectRatio(
-            aspectRatio: 1,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return _ShimmerImageAsset(
-                    imagePath: imagePath,
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
-                    fit: BoxFit.cover,
-                    borderRadius: BorderRadius.circular(10),
-                  );
-                },
-              ),
             ),
           ),
         ],
