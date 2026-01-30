@@ -57,7 +57,7 @@ void main() {
       ];
 
       for (final color in colors) {
-        expect(color.alpha, inInclusiveRange(0, 255));
+        expect((color.a * 255.0).round().clamp(0, 255), inInclusiveRange(0, 255));
         expect(color.red, inInclusiveRange(0, 255));
         expect(color.green, inInclusiveRange(0, 255));
         expect(color.blue, inInclusiveRange(0, 255));

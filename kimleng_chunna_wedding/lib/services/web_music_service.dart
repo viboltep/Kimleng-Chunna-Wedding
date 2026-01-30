@@ -134,7 +134,7 @@ class WebMusicService {
           '🔄 Music service not initialized, starting initialization...',
         );
         await startBackgroundMusic();
-        return;
+        // Fall through to play (user just triggered this from Open Invitation)
       }
 
       if (_audioElement != null) {

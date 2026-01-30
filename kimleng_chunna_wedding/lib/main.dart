@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'theme/wedding_theme.dart';
 import 'widgets/home_screen.dart';
 import 'widgets/welcome_card.dart';
-import 'services/web_music_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Start background music when app initializes
-  await WebMusicService().startBackgroundMusic();
-  
   runApp(const WeddingApp());
 }
 

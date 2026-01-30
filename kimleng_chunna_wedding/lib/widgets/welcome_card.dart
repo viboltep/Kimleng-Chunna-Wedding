@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:shimmer/shimmer.dart';
+import '../constants/assets.dart';
 import '../services/web_music_service.dart';
-import '../theme/wedding_theme.dart';
 
 /// Figma-inspired welcome gate shown before entering the main invitation.
 class WelcomeCard extends StatefulWidget {
@@ -215,187 +215,272 @@ class _WelcomeCardState extends State<WelcomeCard> {
 
   @override
   Widget build(BuildContext context) {
-    const backgroundColor = Color(0xFFF8F2EB); // from Figma frame background
-    const accentColor = Color(0xFFB88527); // dominant gold/brown accents
-    const secondaryText = Color(0xFF6F4C0B);
+    const gold = Color(0xFFB88527);
+    const warmBrown = Color(0xFF6F4C0B);
+    const deepBrown = Color(0xFF2C1810);
 
     return Scaffold(
-      backgroundColor: backgroundColor,
-      body: Center(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final maxCardWidth = constraints.maxWidth < 900
-                ? constraints.maxWidth * 0.9
-                : 820.0;
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFFDF9F4),
+              Color(0xFFF8F0E6),
+              Color(0xFFF5EBDE),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 400;
+              final cardPadding = isNarrow ? 20.0 : 32.0;
 
-            return Container(
-              width: maxCardWidth,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 20,
-                    offset: const Offset(0, 12),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20),
-                  // Khmer headline
-                  Text(
-                    'សិរីមង្គលអាពាហ៍ពិពាហ៍',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: 'Koulen',
-                      fontSize: 30,
-                      fontWeight: FontWeight.w500,
-                      color: accentColor,
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'You are cordially invited to the wedding',
-                    textAlign: TextAlign.center,
-                    style: WeddingTextStyles.bodyLarge.copyWith(
-                      color: secondaryText,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight - MediaQuery.paddingOf(context).vertical),
+                  child: IntrinsicHeight(
                     child: Column(
                       children: [
-                        //Guest Name with Shimmer
-                        _loading
-                            ? Shimmer.fromColors(
-                                baseColor: accentColor.withValues(alpha: 0.2),
-                                highlightColor: accentColor.withValues(alpha: 0.4),
-                                period: const Duration(milliseconds: 1200),
-                                child: Container(
-                                  width: 200,
-                                  height: 36,
+                        const SizedBox(height: 24),
+                        // Decorative top florals
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _decoFlower(Assets.flower1),
+                            _decoFlower('assets/images/flower2.png'),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        // Invitation card
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: isNarrow ? 16 : 40),
+                          child: Container(
+                            width: double.infinity,
+                            constraints: const BoxConstraints(maxWidth: 440),
+                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                            padding: EdgeInsets.symmetric(horizontal: cardPadding, vertical: 36),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: gold.withValues(alpha: 0.12),
+                                  blurRadius: 24,
+                                  offset: const Offset(0, 8),
+                                ),
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.04),
+                                  blurRadius: 32,
+                                  offset: const Offset(0, 16),
+                                ),
+                              ],
+                              border: Border.all(
+                                color: gold.withValues(alpha: 0.35),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // Gold accent line
+                                Container(
+                                  width: 48,
+                                  height: 3,
                                   decoration: BoxDecoration(
-                                    color: accentColor.withValues(alpha: 0.3),
-                                    borderRadius: BorderRadius.circular(8),
+                                    color: gold,
+                                    borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
-                              )
-                            : Text(
-                                _guestName,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontFamily: 'Battambang',
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w600,
-                                  color: accentColor,
-                                  height: 1.3,
+                                const SizedBox(height: 20),
+                                Text(
+                                  'សិរីមង្គលអាពាហ៍ពិពាហ៍',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontFamily: 'Koulen',
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w500,
+                                    color: gold,
+                                    height: 1.35,
+                                    letterSpacing: 0.5,
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'You are cordially invited to the wedding',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: 'Battambang',
+                                    fontSize: isNarrow ? 13 : 14,
+                                    color: warmBrown,
+                                    height: 1.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                // Decorative divider
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    _dividerLine(gold),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                                      child: Text(
+                                        '◆',
+                                        style: TextStyle(
+                                          fontSize: 8,
+                                          color: gold.withValues(alpha: 0.8),
+                                        ),
+                                      ),
+                                    ),
+                                    _dividerLine(gold),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                // Guest name
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                  decoration: BoxDecoration(
+                                    color: gold.withValues(alpha: 0.06),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color: gold.withValues(alpha: 0.2),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: _loading
+                                      ? Shimmer.fromColors(
+                                          baseColor: gold.withValues(alpha: 0.2),
+                                          highlightColor: gold.withValues(alpha: 0.4),
+                                          period: const Duration(milliseconds: 1200),
+                                          child: Container(
+                                            width: 180,
+                                            height: 32,
+                                            decoration: BoxDecoration(
+                                              color: gold.withValues(alpha: 0.25),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                        )
+                                      : Text(
+                                          _guestName,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontFamily: 'Battambang',
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w600,
+                                            color: deepBrown,
+                                            height: 1.35,
+                                          ),
+                                        ),
+                                ),
+                                const SizedBox(height: 24),
+                                Text(
+                                  'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontFamily: 'Koulen',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    color: gold,
+                                    height: 1.4,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'ភោជនីយដ្ឋាន មហារមង្គល',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: 'Battambang',
+                                    fontSize: isNarrow ? 16 : 18,
+                                    color: warmBrown,
+                                    height: 1.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 32),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: FilledButton(
+                                    onPressed: () async {
+                                      await WebMusicService().resumeBackgroundMusic();
+                                      if (context.mounted) widget.onOpen();
+                                    },
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: gold,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                      elevation: 0,
+                                      shadowColor: gold.withValues(alpha: 0.4),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icons/click-tap.svg',
+                                          width: 20,
+                                          height: 20,
+                                          colorFilter: const ColorFilter.mode(
+                                            Colors.white,
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          'សូមចុចបើកការអញ្ចើញ',
+                                          style: const TextStyle(
+                                            fontFamily: 'Dangrek',
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 28),
-                  Text(
-                    'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: 'Koulen',
-                      fontSize: 22,
-                      fontWeight: FontWeight.w500,
-                      color: accentColor,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'ភោជនីយដ្ឋាន មហារមង្គល',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: 'Battambang',
-                      fontSize: 18,
-                      color: secondaryText,
-                      height: 1.6,
-                    ),
-                  ),
-                  const SizedBox(height: 36),
-                  SizedBox(
-                    width: 240,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        // Start music after user interaction to avoid autoplay block.
-                        try {
-                          await WebMusicService().resumeBackgroundMusic();
-                        } catch (e, stack) {
-                          debugPrint('❌ resumeBackgroundMusic failed: $e');
-                          debugPrint('$stack');
-                        } finally {
-                          widget.onOpen();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: accentColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 14,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        textStyle: WeddingTextStyles.button.copyWith(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                        elevation: 4,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/click-tap.svg',
-                            width: 20,
-                            height: 20,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.white,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'សូមចុចបើកការអញ្ចើញ',
-                            style: const TextStyle(
-                              fontFamily: 'Dangrek',
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _decoFlower(String path) {
+    return Opacity(
+      opacity: 0.55,
+      child: Image.asset(
+        path,
+        width: 72,
+        height: 72,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+      ),
+    );
+  }
+
+  Widget _dividerLine(Color color) {
+    return Container(
+      width: 40,
+      height: 1,
+      color: color.withValues(alpha: 0.4),
     );
   }
 }

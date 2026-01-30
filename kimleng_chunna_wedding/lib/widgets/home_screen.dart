@@ -349,10 +349,14 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _playing = WebMusicService().isPlaying;
     _startCountdown();
-    // Ensure music starts when arriving on Home after user interaction.
-    WebMusicService().resumeBackgroundMusic().then((_) {
-      setState(() {
-        _playing = WebMusicService().isPlaying;
+    // Sync play state after a short delay (music may have just started from Open Invitation tap)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (!mounted) return;
+        final nowPlaying = WebMusicService().isPlaying;
+        if (nowPlaying != _playing) {
+          setState(() => _playing = nowPlaying);
+        }
       });
     });
   }
