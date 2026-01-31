@@ -19,4 +19,6 @@ class Assets {
   static const String story3 = 'assets/images/story3.JPG';
   static const String story4 = 'assets/images/story4.JPG';
   static const String flower1 = 'assets/images/flower1.png';
+  static const String flower2 = 'assets/images/flower2.png';
+  static const String logo = 'assets/images/logo.png';
 }

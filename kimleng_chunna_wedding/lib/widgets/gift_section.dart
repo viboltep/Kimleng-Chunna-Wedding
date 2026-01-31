@@ -35,7 +35,7 @@ class GiftSection extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'សូមទាញអំណោយចូលគណនីធនាគាររបស់យើងខ្ញុំ ឬផ្ទាល់ខ្លួននៅថ្ងៃពិធី។',
+            'ការចូលរួមរបស់លោកអ្នកនៅក្នុងពិធីអាពាហ៍ពិពាហ៍របស់យើង គឺជាអំណោយដ៏មានតម្លៃបំផុតសម្រាប់យើង។ ទោះយ៉ាងណា ប្រសិនបើលោកអ្នកមានបំណងចង់ផ្តល់អំណោយ សូមអនុញ្ញាតឲ្យយើងទទួលយកជាការបរិច្ចាគជាសាច់ប្រាក់ ដោយក្តីគោរព និងអំណរគុណយ៉ាងជ្រាលជ្រៅ។',
             textAlign: TextAlign.center,
             style: WeddingTextStyles.body.copyWith(
               color: _GiftSectionConstants.brown,
@@ -50,10 +50,12 @@ class GiftSection extends StatelessWidget {
               GiftQrCard(
                 title: 'ដុល្លារ',
                 imagePath: Assets.qrDollar,
+                name: 'LIM CHOUNA & SIENG KIMLENG',
               ),
               GiftQrCard(
                 title: 'រៀល',
                 imagePath: Assets.qrRiel,
+                name: 'លឹម ជូណា & សៀង គឹមឡេង',
               ),
             ],
           ),
@@ -110,10 +112,12 @@ class GiftQrCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.imagePath,
+    required this.name,
   });
 
   final String title;
   final String imagePath;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +164,16 @@ class GiftQrCard extends StatelessWidget {
                 },
               ),
             ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: WeddingTextStyles.small.copyWith(
+              color: _GiftSectionConstants.brown,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),

@@ -245,16 +245,18 @@ class _WelcomeCardState extends State<WelcomeCard> {
                   constraints: BoxConstraints(minHeight: constraints.maxHeight - MediaQuery.paddingOf(context).vertical),
                   child: IntrinsicHeight(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
                       children: [
-                        const SizedBox(height: 24),
+                        //const SizedBox(height: 24),
                         // Decorative top florals
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _decoFlower(Assets.flower1),
-                            _decoFlower('assets/images/flower2.png'),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     _decoFlower(Assets.flower1),
+                        //     _decoFlower(Assets.flower2),
+                        //   ],
+                        // ),
                         const SizedBox(height: 16),
                         // Invitation card
                         Padding(

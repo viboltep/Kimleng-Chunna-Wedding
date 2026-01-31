@@ -14,6 +14,7 @@ import '../theme/wedding_theme.dart';
 import '../utils/responsive.dart';
 import 'wedding_agenda_section.dart';
 import 'animated_music_button.dart';
+import 'footer_note.dart';
 import 'gift_section.dart';
 import 'map_embed_stub.dart'
     if (dart.library.html) 'map_embed_web.dart'
@@ -454,7 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _ParentMessages(),
                   const SizedBox(height: 48),
                   const GiftSection(),
-                  _FooterNote(),
+                  const FooterNote(),
                 ],
               ),
             ),
@@ -2263,33 +2264,3 @@ class _MessageCard extends StatelessWidget {
     );
   }
 }
-
-class _FooterNote extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final brown = const Color(0xFF6F4C0B);
-    final gold = const Color(0xFFB88527);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Made with ',
-            style: WeddingTextStyles.body.copyWith(
-              color: brown.withValues(alpha: 0.9),
-            ),
-          ),
-          Icon(Icons.favorite, color: gold, size: 18),
-          Text(
-            ' your special day',
-            style: WeddingTextStyles.body.copyWith(
-              color: brown.withValues(alpha: 0.9),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
