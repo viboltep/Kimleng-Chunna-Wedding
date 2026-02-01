@@ -260,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             maxHeight: viewportHeight,
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.zero,
                             child: Container(
                               color: Colors.black,
                               child: Image.asset(

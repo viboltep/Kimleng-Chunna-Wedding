@@ -47,7 +47,7 @@ class FooterNote extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Kimleng & Chunna',
+            'SIENG KIMLENG & LIM CHOUNA',
             style: WeddingTextStyles.small.copyWith(
               color: gold.withValues(alpha: 0.85),
               fontSize: 13,

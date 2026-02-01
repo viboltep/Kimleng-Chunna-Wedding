@@ -208,7 +208,7 @@ class GallerySection extends StatelessWidget {
                     maxHeight: MediaQuery.of(context).size.height * 0.8,
                   ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.zero,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.5),
@@ -218,7 +218,7 @@ class GallerySection extends StatelessWidget {
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.zero,
                     child: Image.asset(
                       imageUrl,
                       fit: BoxFit.contain,
@@ -227,7 +227,7 @@ class GallerySection extends StatelessWidget {
                           width: 350,
                           height: 350,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.zero,
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
