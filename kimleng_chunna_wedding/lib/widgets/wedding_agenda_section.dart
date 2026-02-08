@@ -125,17 +125,19 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
               .fadeIn(duration: 500.ms, delay: 100.ms)
               .slideY(begin: 0.15, end: 0, curve: Curves.easeOut),
           const SizedBox(height: 24),
-          // iOS segmented control: Day 1 | Day 2
-          CupertinoTheme(
-            data: CupertinoThemeData(
-              primaryColor: gold,
-              brightness: Brightness.light,
-            ),
-            child: CupertinoSlidingSegmentedControl<int>(
-              groupValue: _selectedDayIndex,
-              thumbColor: Colors.white,
-              backgroundColor: gold.withValues(alpha: 0.15),
-              padding: const EdgeInsets.all(4),
+          // iOS segmented control: Day 1 | Day 2 (rounded like add to calendar button)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: CupertinoTheme(
+              data: CupertinoThemeData(
+                primaryColor: gold,
+                brightness: Brightness.light,
+              ),
+              child: CupertinoSlidingSegmentedControl<int>(
+                groupValue: _selectedDayIndex,
+                thumbColor: Colors.white,
+                backgroundColor: gold.withValues(alpha: 0.15),
+                padding: const EdgeInsets.all(4),
               children: {
                 0: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -171,6 +173,7 @@ class _WeddingAgendaSectionState extends State<WeddingAgendaSection> {
                   setState(() => _selectedDayIndex = value);
                 }
               },
+            ),
             ),
           ),
           const SizedBox(height: 20),

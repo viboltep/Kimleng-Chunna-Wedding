@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:shimmer/shimmer.dart';
+
 import '../constants/assets.dart';
 import '../services/web_music_service.dart';
 
@@ -220,22 +221,19 @@ class _WelcomeCardState extends State<WelcomeCard> {
     const deepBrown = Color(0xFF2C1810);
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFDF9F4),
-              Color(0xFFF8F0E6),
-              Color(0xFFF5EBDE),
-            ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Golden background image (Figma design)
+          Image.asset(
+            Assets.background,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              color: const Color(0xFFB88527),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: LayoutBuilder(
+          SafeArea(
+            child: LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 400;
               final cardPadding = isNarrow ? 20.0 : 32.0;
@@ -459,8 +457,9 @@ class _WelcomeCardState extends State<WelcomeCard> {
                 ),
               );
             },
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

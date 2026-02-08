@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -203,6 +204,74 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _countdownTimer;
   String _countdown = '';
   ({int days, int hours, int minutes, int seconds})? _countdownParts;
+
+  final GlobalKey _keyInvitation = GlobalKey();
+  final GlobalKey _keyGallery = GlobalKey();
+  final GlobalKey _keyStory = GlobalKey();
+  final GlobalKey _keyAgenda = GlobalKey();
+  final GlobalKey _keyLocation = GlobalKey();
+
+  void _scrollToSection(GlobalKey key) {
+    final context = key.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.08,
+      );
+    }
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    const brown = Color(0xFF6F4C0B);
+    final isNarrow = MediaQuery.sizeOf(context).width < 600;
+    const titles = ['ទំព័រដើម', 'វិចិត្រសាល', 'ប្រវត្តិស្នេហា', 'កម្មវិធី', 'អំណោយ'];
+    final keys = [_keyInvitation, _keyGallery, _keyStory, _keyAgenda, _keyLocation];
+    return RepaintBoundary(
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: isNarrow ? 12 : 24,
+              vertical: 12,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.5),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (i) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: isNarrow ? 4 : 8),
+                  child: TextButton(
+                    onPressed: () => _scrollToSection(keys[i]),
+                    style: TextButton.styleFrom(
+                      foregroundColor: brown,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isNarrow ? 8 : 14,
+                        vertical: 8,
+                      ),
+                    ),
+                    child: Text(
+                      titles[i],
+                      style: TextStyle(
+                        fontFamily: 'Dangrek',
+                        fontSize: isNarrow ? 14 : 15,
+                        fontWeight: FontWeight.w500,
+                        color: brown,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   static void openImageViewer(
     BuildContext context,
@@ -417,50 +486,90 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const background = Color(0xFFF8F2EB); // Frame background from Figma
+    const background = Color(0xFFB88527); // Fallback gold while image loads
     return Scaffold(
       backgroundColor: background,
       floatingActionButton: AnimatedMusicButton(
         isPlaying: _playing,
         onPressed: _toggleMusic,
       ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              vertical: 20,
-              horizontal: 20,
-            ),
-            child: ResponsiveContainer(
-              maxWidth: ResponsiveBreakpoints.isDesktop(context) ? double.infinity : 1200,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _HeroInvite(
-                    countdownParts: _countdownParts,
-                    celebrationText: _countdown,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Golden background image (Figma design) - fills entire screen
+          Image.asset(
+            Assets.background,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(color: background),
+          ),
+          SafeArea(
+            child: Stack(
+              children: [
+                // Scroll content fills the screen so it can scroll *behind* the app bar (for blur)
+                Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(
+                      top: 56,
+                      bottom: 20,
+                      left: 20,
+                      right: 20,
+                    ),
+                    child: ResponsiveContainer(
+                      maxWidth: ResponsiveBreakpoints.isDesktop(context) ? double.infinity : 1200,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          KeyedSubtree(
+                            key: _keyInvitation,
+                            child: _HeroInvite(
+                              countdownParts: _countdownParts,
+                              celebrationText: _countdown,
+                            ),
+                          ),
+                          const SizedBox(height: 48),
+                          KeyedSubtree(
+                            key: _keyGallery,
+                            child: _GalleryCollage(
+                              onImageTap: (index) =>
+                                  _HomeScreenState.openImageViewer(context, _galleryImages, index),
+                            ),
+                          ),
+                          const SizedBox(height: 48),
+                          KeyedSubtree(
+                            key: _keyStory,
+                            child: _LoveStorySection(),
+                          ),
+                          const SizedBox(height: 48),
+                          KeyedSubtree(
+                            key: _keyAgenda,
+                            child: const WeddingAgendaSection(),
+                          ),
+                          const SizedBox(height: 48),
+                          KeyedSubtree(
+                            key: _keyLocation,
+                            child: _MapBlessingRow(),
+                          ),
+                          const SizedBox(height: 48),
+                          _ParentMessages(),
+                          const SizedBox(height: 48),
+                          const GiftSection(),
+                          const FooterNote(),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 48),
-                  _GalleryCollage(
-                    onImageTap: (index) =>
-                        _HomeScreenState.openImageViewer(context, _galleryImages, index),
-                  ),
-                  const SizedBox(height: 48),
-                  _LoveStorySection(),
-                  const SizedBox(height: 48),
-                  const WeddingAgendaSection(),
-                  const SizedBox(height: 48),
-                  _MapBlessingRow(),
-                  const SizedBox(height: 48),
-                  _ParentMessages(),
-                  const SizedBox(height: 48),
-                  const GiftSection(),
-                  const FooterNote(),
-                ],
-              ),
+                ),
+                // App bar on top so BackdropFilter blurs the scrolling content behind it
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: _buildAppBar(context),
+                ),
+              ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
