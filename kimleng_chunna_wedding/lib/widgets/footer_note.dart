@@ -9,8 +9,9 @@ class FooterNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const brown = Color(0xFF6F4C0B);
-    const gold = Color(0xFFB88527);
+    const textColor = Colors.white;
+    const heartColor = Colors.red;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       child: Column(
@@ -31,29 +32,29 @@ class FooterNote extends StatelessWidget {
               Text(
                 'Made with ',
                 style: WeddingTextStyles.body.copyWith(
-                  color: brown.withValues(alpha: 0.9),
+                  color: textColor,
                   fontSize: 14,
                 ),
               ),
-              Icon(Icons.favorite, color: gold, size: 18),
+              Icon(Icons.favorite, color: heartColor, size: 18),
               Text(
                 ' for your special day',
                 style: WeddingTextStyles.body.copyWith(
-                  color: brown.withValues(alpha: 0.9),
+                  color: textColor,
                   fontSize: 14,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            'SIENG KIMLENG & LIM CHOUNA',
-            style: WeddingTextStyles.small.copyWith(
-              color: gold.withValues(alpha: 0.85),
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
+            Text(
+              'SIENG KIMLENG & LIM CHOUNA',
+              style: WeddingTextStyles.small.copyWith(
+                color: textColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
         ],
       ),
     );

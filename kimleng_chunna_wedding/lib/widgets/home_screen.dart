@@ -209,16 +209,18 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey _keyGallery = GlobalKey();
   final GlobalKey _keyStory = GlobalKey();
   final GlobalKey _keyAgenda = GlobalKey();
-  final GlobalKey _keyLocation = GlobalKey();
+  final GlobalKey _keyGift = GlobalKey();
 
   void _scrollToSection(GlobalKey key) {
     final context = key.currentContext;
     if (context != null) {
+      // For first section (ទំព័រដើម), align to top (0) so page scrolls to top; others use 0.08
+      final alignment = key == _keyInvitation ? 0.0 : 0.08;
       Scrollable.ensureVisible(
         context,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
-        alignment: 0.08,
+        alignment: alignment,
       );
     }
   }
@@ -227,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const brown = Color(0xFF6F4C0B);
     final isNarrow = MediaQuery.sizeOf(context).width < 600;
     const titles = ['ទំព័រដើម', 'វិចិត្រសាល', 'ប្រវត្តិស្នេហា', 'កម្មវិធី', 'អំណោយ'];
-    final keys = [_keyInvitation, _keyGallery, _keyStory, _keyAgenda, _keyLocation];
+    final keys = [_keyInvitation, _keyGallery, _keyStory, _keyAgenda, _keyGift];
     return RepaintBoundary(
       child: ClipRect(
         child: BackdropFilter(
@@ -509,7 +511,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Center(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.only(
-                      top: 56,
+                      top: 80, // app bar ~56 + 24 gap so first section has clear space below bar
                       bottom: 20,
                       left: 20,
                       right: 20,
@@ -546,13 +548,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const SizedBox(height: 48),
                           KeyedSubtree(
-                            key: _keyLocation,
                             child: _MapBlessingRow(),
                           ),
                           const SizedBox(height: 48),
                           _ParentMessages(),
                           const SizedBox(height: 48),
-                          const GiftSection(),
+                          KeyedSubtree(
+                            key: _keyGift,
+                            child: const GiftSection(),
+                          ),
                           const FooterNote(),
                         ],
                       ),
@@ -606,42 +610,24 @@ class _HeroInvite extends StatelessWidget {
             final isNarrow = constraints.maxWidth < 740;
             final flowerSize = isNarrow ? 180.0 : 400.0;
             final horizontalPadding = isNarrow ? 60.0 : 100.0;
+            // Use fixed height so Stack fills container and content can be vertically centered
+            final sectionHeight = viewHeight * 0.95;
 
-            return Stack(
-              children: [
-                // Bottom left flower - positioned at bottom of container
-                Positioned(
-                  left: 0,
-                  bottom: 0,
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Transform.translate(
-                      offset: Offset(
-                        isNarrow ? -flowerSize * 0.2 : -flowerSize * 0.2,
-                        0,
-                      ),
-                      child: Image.asset(
-                        Assets.flower1,
-                        width: flowerSize,
-                        height: flowerSize,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
-                // Bottom right flower - positioned at bottom of container
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Transform.translate(
-                      offset: Offset(
-                        isNarrow ? flowerSize * 0.2 : flowerSize * 0.2,
-                        0,
-                      ),
-                      child: Transform.flip(
-                        flipX: true,
+            return SizedBox(
+              height: sectionHeight,
+              child: Stack(
+                children: [
+                  // Bottom left flower - positioned at bottom of container
+                  Positioned(
+                    left: 0,
+                    bottom: 0,
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Transform.translate(
+                        offset: Offset(
+                          isNarrow ? -flowerSize * 0.2 : -flowerSize * 0.2,
+                          0,
+                        ),
                         child: Image.asset(
                           Assets.flower1,
                           width: flowerSize,
@@ -651,143 +637,179 @@ class _HeroInvite extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-                // Main content
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 24,
-                      horizontal: horizontalPadding,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            final isNarrow = constraints.maxWidth < 700;
-                            if (isNarrow) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  _ShimmerAvatar(
-                                    asset: Assets.photo8,
-                                    radius: 80,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Text(
-                                    'សៀង គឹមឡេង',
-                                    textAlign: TextAlign.center,
-                                    style: WeddingTextStyles.heading2.copyWith(
-                                      color: const Color(0xFFB88527),
-                                      fontSize: 26,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    'និង',
-                                    textAlign: TextAlign.center,
-                                    style: WeddingTextStyles.body.copyWith(
-                                      color: const Color(0xFF6F4C0B),
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    'លឹម ជូណា',
-                                    textAlign: TextAlign.center,
-                                    style: WeddingTextStyles.heading2.copyWith(
-                                      color: const Color(0xFFB88527),
-                                      fontSize: 26,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }
-
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    'សៀង គឹមឡេង',
-                                    textAlign: TextAlign.center,
-                                    style: WeddingTextStyles.heading2.copyWith(
-                                      color: const Color(0xFFB88527),
-                                      fontSize: 30,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 32),
-                                _ShimmerAvatar(
-                                  asset: Assets.photo8,
-                                  radius: 100,
-                                ),
-                                const SizedBox(width: 32),
-                                Flexible(
-                                  child: Text(
-                                    'លឹម ជូណា',
-                                    textAlign: TextAlign.center,
-                                    style: WeddingTextStyles.heading2.copyWith(
-                                      color: const Color(0xFFB88527),
-                                      fontSize: 30,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
+                  // Bottom right flower - positioned at bottom of container
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Transform.translate(
+                        offset: Offset(
+                          isNarrow ? flowerSize * 0.2 : flowerSize * 0.2,
+                          0,
                         ),
-                        const SizedBox(height: 40),
-                        Column(
+                        child: Transform.flip(
+                          flipX: true,
+                          child: Image.asset(
+                            Assets.flower1,
+                            width: flowerSize,
+                            height: flowerSize,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Main content — fill container then center so content is vertically centered (Figma)
+                  Positioned.fill(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 24,
+                          horizontal: horizontalPadding,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontFamily: 'Dangrek',
-                                fontSize: 22,
-                                color: Color(0xFFB88527),
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final isNarrow = constraints.maxWidth < 700;
+                                final contentWidth = constraints.maxWidth;
+                                if (isNarrow) {
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      _ShimmerAvatar(
+                                        asset: Assets.photo11,
+                                        radius: 80,
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Text(
+                                        'សៀង គឹមឡេង',
+                                        textAlign: TextAlign.center,
+                                        style: WeddingTextStyles.heading2.copyWith(
+                                          color: const Color(0xFFB88527),
+                                          fontSize: 26,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'និង',
+                                        textAlign: TextAlign.center,
+                                        style: WeddingTextStyles.body.copyWith(
+                                          color: const Color(0xFF6F4C0B),
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'លឹម ជូណា',
+                                        textAlign: TextAlign.center,
+                                        style: WeddingTextStyles.heading2.copyWith(
+                                          color: const Color(0xFFB88527),
+                                          fontSize: 26,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
 
-                            const SizedBox(height: 16),
-                            Text(
-                              'ភោជនីយដ្ឋាន មហារមង្គល',
-                              textAlign: TextAlign.center,
-                              style: WeddingTextStyles.heading3.copyWith(
-                                color: const Color(0xFF6F4C0B),
-                                fontSize: 24,
+                                // Symmetric row so circular image stays perfectly centered (Figma)
+                                return SizedBox(
+                                  width: contentWidth,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+                                        child: Center(
+                                          child: Text(
+                                            'សៀង គឹមឡេង',
+                                            textAlign: TextAlign.center,
+                                            style: WeddingTextStyles.heading2.copyWith(
+                                              color: const Color(0xFFB88527),
+                                              fontSize: 30,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 24),
+                                      _ShimmerAvatar(
+                                        asset: Assets.photo11,
+                                        radius: 100,
+                                      ),
+                                      const SizedBox(width: 24),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Center(
+                                          child: Text(
+                                            'លឹម ជូណា',
+                                            textAlign: TextAlign.center,
+                                            style: WeddingTextStyles.heading2.copyWith(
+                                              color: const Color(0xFFB88527),
+                                              fontSize: 30,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 40),
+                            Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'ថ្ងៃអាទិត្យ ទី១ ខែមិនា ឆ្នាំ ២០២៦',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontFamily: 'Dangrek',
+                                      fontSize: 22,
+                                      color: Color(0xFFB88527),
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'ភោជនីយដ្ឋាន មហារមង្គល',
+                                    textAlign: TextAlign.center,
+                                    style: WeddingTextStyles.heading3.copyWith(
+                                      color: const Color(0xFF6F4C0B),
+                                      fontSize: 24,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 32),
+                                  if (countdownParts != null)
+                                    _CountdownRow(parts: countdownParts!)
+                                  else if (celebrationText.isNotEmpty)
+                                    Text(
+                                      celebrationText,
+                                      textAlign: TextAlign.center,
+                                      style: WeddingTextStyles.heading3.copyWith(
+                                        color: const Color(0xFF6F4C0B),
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  const SizedBox(height: 32),
+                                  _CalendarButton(),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 32),
-                            if (countdownParts != null)
-                              _CountdownRow(parts: countdownParts!)
-                            else if (celebrationText.isNotEmpty)
-                              Text(
-                                celebrationText,
-                                textAlign: TextAlign.center,
-                                style: WeddingTextStyles.heading3.copyWith(
-                                  color: const Color(0xFF6F4C0B),
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            const SizedBox(height: 32),
-                            _CalendarButton(),
                           ],
-                        ),
-                      ],
+                        ),  // main Column
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         ),

@@ -66,7 +66,7 @@ class GiftSection extends StatelessWidget {
               onPressed: () => _handlePaymentAppLaunch(context),
               icon: const Icon(Iconsax.card, size: 18),
               label: Text(
-                'បើកកម្មវិធីបង់ប្រាក់',
+                'បើកកម្មវិធី ABA',
                 style: WeddingTextStyles.button.copyWith(fontSize: 14),
               ),
               style: ElevatedButton.styleFrom(
@@ -77,7 +77,7 @@ class GiftSection extends StatelessWidget {
                   vertical: 12,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(24),
                 ),
               ),
             ),

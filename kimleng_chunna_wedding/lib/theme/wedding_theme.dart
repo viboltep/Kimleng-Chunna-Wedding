@@ -15,70 +15,70 @@ class WeddingColors {
 
 class WeddingTextStyles {
   static TextStyle get heading1 => const TextStyle(
-        fontFamily: 'Battambang',
-        fontSize: 48,
-        fontWeight: FontWeight.bold,
-        color: WeddingColors.textPrimary,
-        height: 1.2,
-      );
+    fontFamily: 'Battambang',
+    fontSize: 48,
+    fontWeight: FontWeight.bold,
+    color: WeddingColors.textPrimary,
+    height: 1.2,
+  );
 
   static TextStyle get heading2 => const TextStyle(
-        fontFamily: 'Koulen',
-        fontSize: 64,
-        fontWeight: FontWeight.w600,
-        color: WeddingColors.textPrimary,
-        height: 1.3,
-      );
+    fontFamily: 'Koulen',
+    fontSize: 64,
+    fontWeight: FontWeight.w600,
+    color: WeddingColors.textPrimary,
+    height: 1.3,
+  );
 
   static TextStyle get heading3 => const TextStyle(
-        fontFamily: 'Koulen',
-        fontSize: 32,
-        fontWeight: FontWeight.w500,
-        color: WeddingColors.textPrimary,
-        height: 1.4,
-      );
+    fontFamily: 'Koulen',
+    fontSize: 32,
+    fontWeight: FontWeight.w500,
+    color: WeddingColors.textPrimary,
+    height: 1.4,
+  );
 
   static TextStyle get body => const TextStyle(
-        fontFamily: 'Battambang',
-        fontSize: 16,
-        color: WeddingColors.textSecondary,
-        height: 1.6,
-      );
+    fontFamily: 'Battambang',
+    fontSize: 16,
+    color: WeddingColors.textSecondary,
+    height: 1.6,
+  );
 
   static TextStyle get bodyLarge => const TextStyle(
-        fontFamily: 'Battambang',
-        fontSize: 18,
-        color: WeddingColors.textSecondary,
-        height: 1.6,
-      );
+    fontFamily: 'Battambang',
+    fontSize: 18,
+    color: WeddingColors.textSecondary,
+    height: 1.6,
+  );
 
   static TextStyle get caption => const TextStyle(
-        fontFamily: 'Battambang',
-        fontSize: 14,
-        color: WeddingColors.textSecondary,
-        fontStyle: FontStyle.italic,
-        height: 1.5,
-      );
+    fontFamily: 'Battambang',
+    fontSize: 14,
+    color: WeddingColors.textSecondary,
+    fontStyle: FontStyle.italic,
+    height: 1.5,
+  );
 
   static TextStyle get button => const TextStyle(
-        fontFamily: 'Dangrek',
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: WeddingColors.white,
-      );
+    fontFamily: 'Dangrek',
+    fontSize: 16,
+    color: Colors.white,
+    fontWeight: FontWeight.w400,
+  );
 
   static TextStyle get small => const TextStyle(
-        fontFamily: 'Battambang',
-        fontSize: 12,
-        color: WeddingColors.textSecondary,
-        height: 1.4,
-      );
+    fontFamily: 'Battambang',
+    fontSize: 12,
+    color: WeddingColors.textSecondary,
+    height: 1.4,
+  );
   static TextStyle get smallKhmer => const TextStyle(
-        fontFamily: 'Battambang',
-        fontSize: 12,
-        color: WeddingColors.textSecondary,
-        height: 1.4,
-      );
+    fontFamily: 'Battambang',
+    fontSize: 12,
+    color: WeddingColors.textSecondary,
+    height: 1.4,
+  );
 
   // Kept for backward compatibility - now uses Moulpali font
   static TextStyle bayon({
