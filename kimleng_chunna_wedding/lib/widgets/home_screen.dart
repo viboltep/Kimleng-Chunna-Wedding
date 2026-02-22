@@ -17,6 +17,7 @@ import 'wedding_agenda_section.dart';
 import 'animated_music_button.dart';
 import 'footer_note.dart';
 import 'gift_section.dart';
+import 'scroll_reveal.dart';
 import 'map_embed_stub.dart'
     if (dart.library.html) 'map_embed_web.dart'
     as map_embed;
@@ -523,41 +524,70 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           KeyedSubtree(
                             key: _keyInvitation,
-                            child: _HeroInvite(
-                              countdownParts: _countdownParts,
-                              celebrationText: _countdown,
+                            child: ScrollReveal(
+                              sectionKey: 'hero',
+                              child: _HeroInvite(
+                                countdownParts: _countdownParts,
+                                celebrationText: _countdown,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 48),
                           KeyedSubtree(
                             key: _keyGallery,
-                            child: _GalleryCollage(
-                              onImageTap: (index) =>
-                                  _HomeScreenState.openImageViewer(context, _galleryImages, index),
+                            child: ScrollReveal(
+                              sectionKey: 'gallery',
+                              delay: const Duration(milliseconds: 50),
+                              child: _GalleryCollage(
+                                onImageTap: (index) =>
+                                    _HomeScreenState.openImageViewer(context, _galleryImages, index),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 48),
                           KeyedSubtree(
                             key: _keyStory,
-                            child: _LoveStorySection(),
+                            child: ScrollReveal(
+                              sectionKey: 'story',
+                              delay: const Duration(milliseconds: 50),
+                              child: _LoveStorySection(),
+                            ),
                           ),
                           const SizedBox(height: 48),
                           KeyedSubtree(
                             key: _keyAgenda,
-                            child: const WeddingAgendaSection(),
+                            child: ScrollReveal(
+                              sectionKey: 'agenda',
+                              delay: const Duration(milliseconds: 50),
+                              child: const WeddingAgendaSection(),
+                            ),
                           ),
                           const SizedBox(height: 48),
-                          KeyedSubtree(
+                          ScrollReveal(
+                            sectionKey: 'location',
+                            delay: const Duration(milliseconds: 50),
                             child: _MapBlessingRow(),
                           ),
                           const SizedBox(height: 48),
-                          _ParentMessages(),
+                          ScrollReveal(
+                            sectionKey: 'parents',
+                            delay: const Duration(milliseconds: 50),
+                            child: _ParentMessages(),
+                          ),
                           const SizedBox(height: 48),
                           KeyedSubtree(
                             key: _keyGift,
-                            child: const GiftSection(),
+                            child: ScrollReveal(
+                              sectionKey: 'gift',
+                              delay: const Duration(milliseconds: 50),
+                              child: const GiftSection(),
+                            ),
                           ),
-                          const FooterNote(),
+                          ScrollReveal(
+                            sectionKey: 'footer',
+                            delay: const Duration(milliseconds: 50),
+                            child: const FooterNote(),
+                          ),
                         ],
                       ),
                     ),
